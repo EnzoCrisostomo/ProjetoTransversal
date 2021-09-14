@@ -10,9 +10,15 @@ enum class BlockId
 	Grass,
 	Dirt,
 	Stone,
-	Sand,
-	Wood,
+	DarkWood,
+	LightWood,
 	Leaf,
+	Sand,
+	SandStone,
+	StoneBrick,
+	DarkPlanks,
+	LightPlanks,
+	Lava,
 
 	blockCount
 };

@@ -18,8 +18,8 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 	for (size_t x = 0; x < Options::chunkSize; x++)
 	for (size_t z = 0; z < Options::chunkSize; z++)
 	{		
-		SetBlock(x, y, z, BlockId::Sand);
-		continue;
+		if (y > 40)
+			continue;
 		//Altura igual ao mapa de altura
 		if (y == 40)
 		{
@@ -27,7 +27,6 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 				SetBlock(x, y, z, BlockId::Sand);
 			else
 				SetBlock(x, y, z, BlockId::Grass);
-			TryToGenerateTree(x, y, z);
 		}
 		//Altura até 5 blocos a baixo do mapa de altura
 		else if (y > 35)
@@ -136,32 +135,4 @@ bool ChunkColumn::OutOfBounds(int x, int y, int z) const
 		return true;
 	else
 		return false;
-}
-
-//tenta adicionar uma arvore no local
-void ChunkColumn::TryToGenerateTree(int x, int y, int z)
-{
-	std::random_device rd;
-	std::mt19937 randomGenerator(rd());
-	std::uniform_int_distribution<> distr(0, 3000);
-	int number = distr(randomGenerator);
-	if (number > 4 && number < 10)
-	{
-		for (int i = 1; i < number; i++)
-			SetBlock(x, y + i, z, BlockId::Wood);
-		for (int i =  number - 2; i < number + 1; i++)
-		for (int j = -2; j <= 2; j++)
-		for (int k = -2; k <= 2; k++)
-		{
-			if (GetBlock({ x + j, y + i, z + k }) == BlockId::Air)
-			{
-				int chunkY = (y + i) / Options::chunkSize;
-				int blockY = (y + i) % Options::chunkSize;
-
-				if (chunkY < 0 || chunkY >= Options::chunkColumnHeigth)
-					continue;
-				GetChunk(chunkY).SetBlock(x + j, blockY, z + k, BlockId::Leaf);
-			}
-		}
-	}
 }

@@ -24,7 +24,6 @@ public:
 	bool HasFullMesh();
 private:
 	bool OutOfBounds(int x, int y, int z) const;
-	void TryToGenerateTree(int x, int y, int z);
 
 	World& m_world;
 	VectorXZ m_position;

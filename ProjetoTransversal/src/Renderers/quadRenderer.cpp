@@ -4,7 +4,7 @@
 QuadRenderer::QuadRenderer()
 {
     //TODO inicializaton list
-	m_texture.loadFromFile("src/res/AtlasTeste.png");
+	m_texture.loadFromFile("src/res/Atlas.png");
     m_shader.LoadFromFile("src/shaders/Basic.glsl");
 
     m_model.SetData({
