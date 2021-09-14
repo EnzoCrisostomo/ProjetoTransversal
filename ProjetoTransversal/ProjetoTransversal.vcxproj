@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ProjetoTransversal\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,8 +151,61 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\OpenGL\IndexBuffer.cpp" />
+    <ClCompile Include="src\OpenGL\Model.cpp" />
+    <ClCompile Include="src\OpenGL\Shader.cpp" />
+    <ClCompile Include="src\OpenGL\Texture.cpp" />
+    <ClCompile Include="src\OpenGL\VertexArray.cpp" />
+    <ClCompile Include="src\OpenGL\VertexBuffer.cpp" />
+    <ClCompile Include="src\Options\Options.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Renderers\ChunkRenderer.cpp" />
+    <ClCompile Include="src\Renderers\CubeRenderer.cpp" />
+    <ClCompile Include="src\Renderers\MasterRenderer.cpp" />
+    <ClCompile Include="src\Renderers\quadRenderer.cpp" />
+    <ClCompile Include="src\World\Block.cpp" />
+    <ClCompile Include="src\World\BlockDatabase.cpp" />
+    <ClCompile Include="src\World\Chunk.cpp" />
+    <ClCompile Include="src\World\ChunkColumn.cpp" />
+    <ClCompile Include="src\World\ChunkManager.cpp" />
+    <ClCompile Include="src\World\ChunkMesh.cpp" />
+    <ClCompile Include="src\World\ChunkMeshBuilder.cpp" />
+    <ClCompile Include="src\World\VectorXZ.cpp" />
+    <ClCompile Include="src\World\World.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\OpenGL\IndexBuffer.h" />
+    <ClInclude Include="src\OpenGL\Mesh.h" />
+    <ClInclude Include="src\OpenGL\Model.h" />
+    <ClInclude Include="src\OpenGL\Shader.h" />
+    <ClInclude Include="src\OpenGL\Texture.h" />
+    <ClInclude Include="src\OpenGL\VertexArray.h" />
+    <ClInclude Include="src\OpenGL\VertexBuffer.h" />
+    <ClInclude Include="src\Options\Options.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\Renderers\ChunkRenderer.h" />
+    <ClInclude Include="src\Renderers\CubeRenderer.h" />
+    <ClInclude Include="src\Renderers\MasterRenderer.h" />
+    <ClInclude Include="src\Renderers\quadRenderer.h" />
+    <ClInclude Include="src\World\Block.h" />
+    <ClInclude Include="src\World\BlockDatabase.h" />
+    <ClInclude Include="src\World\Chunk.h" />
+    <ClInclude Include="src\World\ChunkColumn.h" />
+    <ClInclude Include="src\World\ChunkManager.h" />
+    <ClInclude Include="src\World\ChunkMesh.h" />
+    <ClInclude Include="src\World\ChunkMeshBuilder.h" />
+    <ClInclude Include="src\World\VectorXZ.h" />
+    <ClInclude Include="src\World\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\Basic.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\res\AtlasTeste.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
