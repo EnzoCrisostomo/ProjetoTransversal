@@ -12,7 +12,7 @@ class ChunkRenderer
 public:
 	ChunkRenderer();
 	void AddToQueue(const ChunkMesh& chunk);
-	void RenderChunks(const Player& player);
+	void RenderChunks(const Player player);
 
 private:
 	std::vector<const ChunkMesh*> m_chunks;

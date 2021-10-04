@@ -38,6 +38,7 @@ Application::Application(const char* applicationName, int width, int height)
 
     m_masterRenderer = new MasterRenderer();
     m_world = new World(m_player);
+    m_player.SetWindow(m_window);
 }
 
 Application::~Application()
@@ -55,15 +56,14 @@ void Application::runLoop()
     while (!glfwWindowShouldClose(m_window))
     {
         double newFrameTime = glfwGetTime();
-        glClearColor(0.40f, 0.80f, 0.9f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (shouldUpdateProjMat)
         {
             shouldUpdateProjMat = false;
+            m_masterRenderer->UpdateOrthoProjMatrix();
             m_player.CreateProjectionMatrix();
         }
-        m_player.Update(m_window, m_elapsedTime);
+        m_player.Update(m_world, m_elapsedTime);
 
         m_world->UpdateWorld(m_player);
         m_world->RenderWorld(m_masterRenderer);
@@ -72,7 +72,13 @@ void Application::runLoop()
         glfwSwapBuffers(m_window);
         glfwPollEvents();
         m_elapsedTime = glfwGetTime() - newFrameTime;
-        double fps = 1.0 / m_elapsedTime;
+        /*double fps = 1.0 / m_elapsedTime;
+        while (fps > 5)
+        {
+            m_elapsedTime = glfwGetTime() - newFrameTime;
+            fps = 1.0 / m_elapsedTime;
+        }
+        std::cout << "Elapsed Time: " << m_elapsedTime << "\n";*/
         //std::cout << "fps: " << (int)fps << "\n";
     }
 }

@@ -22,4 +22,5 @@ private:
 	VertexBuffer m_vertexTextureCoordinates;
 	IndexBuffer m_indexBuffer;
 	VertexArray m_vertexArray;
+
 };

@@ -98,34 +98,39 @@ void ChunkMeshBuilder::BuildMesh(Chunk& chunk)
 
 void ChunkMeshBuilder::TryToAddBlock(const BlockId& blockId, const glm::ivec3& blockPosition, const AdjacentBlocks& adjacentBlocks)
 {
-    const Block& block = m_blockDatabase.GetBlockInfo(blockId);
+    const Block& block = BlockDatabase::Get().GetBlockInfo(blockId);
 
-    TryToAddFace(Face::top, block.GetTopTexture(), blockPosition, adjacentBlocks.up);
-    TryToAddFace(Face::bottom, block.GetBottomTexture(), blockPosition, adjacentBlocks.down);
+    TryToAddFace(blockId, Face::top, block.GetTopTexture(), blockPosition, adjacentBlocks.up);
+    TryToAddFace(blockId, Face::bottom, block.GetBottomTexture(), blockPosition, adjacentBlocks.down);
 
-    TryToAddFace(Face::left, block.GetSideTexture(), blockPosition, adjacentBlocks.left);
-    TryToAddFace(Face::right, block.GetSideTexture(), blockPosition, adjacentBlocks.right);
+    TryToAddFace(blockId, Face::left, block.GetSideTexture(), blockPosition, adjacentBlocks.left);
+    TryToAddFace(blockId, Face::right, block.GetSideTexture(), blockPosition, adjacentBlocks.right);
 
-    TryToAddFace(Face::front, block.GetSideTexture(), blockPosition, adjacentBlocks.front);
-    TryToAddFace(Face::back, block.GetSideTexture(), blockPosition, adjacentBlocks.back);
+    TryToAddFace(blockId, Face::front, block.GetSideTexture(), blockPosition, adjacentBlocks.front);
+    TryToAddFace(blockId, Face::back, block.GetSideTexture(), blockPosition, adjacentBlocks.back);
 }
 
-void ChunkMeshBuilder::TryToAddFace(const std::vector<GLfloat>& blockFace, const std::vector<GLfloat>& textureCoords,
+void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GLfloat>& blockFace, const std::vector<GLfloat>& textureCoords,
                                     const glm::ivec3& blockPosition, const glm::ivec3& blockFacing)
 {
-    if (ShouldMakeFace(blockFacing))
+    if (ShouldMakeFace(blockId, blockFacing))
     {
         m_chunkMesh->AddBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
     }
 }
 
-bool ChunkMeshBuilder::ShouldMakeFace(const glm::ivec3& blockFacing)
+bool ChunkMeshBuilder::ShouldMakeFace(const BlockId& blockId, const glm::ivec3& blockFacing)
 {
-    const BlockId& blockId = m_chunk->GetBlock(blockFacing.x, blockFacing.y, blockFacing.z);
-    const Block& block = m_blockDatabase.GetBlockInfo(blockId);
-
-    if (block.IsTranslucent())
-        return true;
+    const BlockId& blockFacingId = m_chunk->GetBlock(blockFacing.x, blockFacing.y, blockFacing.z);
+    const Block& block = BlockDatabase::Get().GetBlockInfo(blockFacingId);
+    
+    if (block.IsTranslucent() != Transparency::Opaque)
+    {
+        if (blockId == blockFacingId && block.IsTranslucent() == Transparency::Full)
+            return false;
+        else
+            return true;
+    }
     else
         return false;
 }

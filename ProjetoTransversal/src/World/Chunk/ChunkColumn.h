@@ -2,7 +2,6 @@
 #include <vector>
 #include <queue>
 #include "Chunk.h"
-#include "VectorXZ.h"
 #include "Renderers/MasterRenderer.h"
 
 class World;
@@ -24,6 +23,8 @@ public:
 	bool HasFullMesh();
 private:
 	bool OutOfBounds(int x, int y, int z) const;
+	const glm::ivec3 GetGlobalPosition(int x, int y, int z) const;
+	void TryToGenerateTree(int x, int y, int z);
 
 	World& m_world;
 	VectorXZ m_position;

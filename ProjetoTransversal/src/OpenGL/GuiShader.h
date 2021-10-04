@@ -4,12 +4,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Shader
+class GuiShader
 {
 public:
-	Shader() = default;
-	Shader(const char* shaderFilePath);
-	~Shader();
+	GuiShader() = default;
+	GuiShader(const char* shaderFilePath);
+	~GuiShader();
 
 	void LoadFromFile(const char* shaderFilePath);
 
@@ -28,13 +28,9 @@ public:
 	void LoadMatrix4(GLuint location, const glm::mat4 matrix) const;
 
 	void loadProjectionMatrix(const glm::mat4 matrix);
-	void loadViewMatrix(const glm::mat4 matrix);
-	void loadModelMatrix(const glm::mat4 matrix);
 private:
 	GLuint m_programId = 0;
 	GLuint m_projectionMatrixLocation = 0;
-	GLuint m_viewMatrixLocation = 0;
-	GLuint m_modelMatrixLocation = 0;
 
 	void GetUniforms();
 	void CompileShaders(const char* shaderFilePath, std::stringstream sourceArray[]) const;

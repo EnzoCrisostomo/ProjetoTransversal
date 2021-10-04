@@ -1,16 +1,16 @@
 #include "World.h"
 #include "Renderers/MasterRenderer.h"
-#include "Player.h"
+#include "Player/Player.h"
 #include <limits>
 
 namespace
 {
 	VectorXZ GetChunkPos(const glm::ivec3& position)
 	{
-		float fPosX = static_cast<float>(position.x);
-		float fPosZ = static_cast<float>(position.z);
-		int chunkX = floor(fPosX / Options::chunkSize);
-		int chunkZ = floor(fPosZ / Options::chunkSize);
+		double fPosX = static_cast<double>(position.x);
+		double fPosZ = static_cast<double>(position.z);
+		int chunkX  = static_cast<int>(floor(fPosX / Options::chunkSize));
+		int chunkZ  = static_cast<int>(floor(fPosZ / Options::chunkSize));
 		return { chunkX, chunkZ };
 	}
 
@@ -24,27 +24,19 @@ namespace
 		if (modZ < 0)
 			modZ += Options::chunkSize;
 
-
 		return { modX, position.y, modZ };
-	}
-	glm::ivec3 Floor(const glm::vec3& pos)
-	{
-		int x = static_cast<int>(floor(pos.x));
-		int y = static_cast<int>(floor(pos.y));
-		int z = static_cast<int>(floor(pos.z));
-		return glm::ivec3(x, y, z);
 	}
 }
 
 World::World(Player& player)
 	: m_chunkManager(*this)
 {
-	int chunkPlayerX = floor(player.GetPosition().x / Options::chunkSize);
-	int chunkPlayerZ = floor(player.GetPosition().z / Options::chunkSize);
+	int chunkPlayerX = static_cast<int>(floor(player.GetPosition().x / Options::chunkSize));
+	int chunkPlayerZ = static_cast<int>(floor(player.GetPosition().z / Options::chunkSize));
 
 	srand((unsigned)time(0));
 
-	m_seed = (rand() % std::numeric_limits<int>::max()) + 1;
+	m_seed = 1337;//(rand() % std::numeric_limits<int>::max()) + 1;
 
 	m_oldPlayerPos = { chunkPlayerX, chunkPlayerZ };
 
@@ -59,7 +51,7 @@ World::~World()
 //Checa para ver se a posição existe no mundo
 const bool World::OutOfBounds(VectorXZ chunkPos, int y) const
 {
-	if (y < 0 || y > Options::chunkSize * Options::chunkColumnHeigth)
+	if (y < 0 || y >= Options::chunkSize * Options::chunkColumnHeigth)
 		return true;
 	if (!m_chunkManager.ChunkIsLoaded(chunkPos))
 		return true;
@@ -77,7 +69,7 @@ const bool World::OutOfBoundsXZ(VectorXZ chunkPos) const
 
 const bool World::OutOfBoundsY(int y) const
 {
-	if (y < 0 || y > Options::chunkSize * Options::chunkColumnHeigth)
+	if (y < 0 || y >= Options::chunkSize * Options::chunkColumnHeigth)
 		return true;
 
 	return false;
@@ -106,7 +98,7 @@ void World::BuildMesh()
 void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 {
 	//Loop para determinar quais chunks estao na viewDistance e na loadDistance
-	int maxIterations = pow(Options::loadDistance * 2, 2);
+	int maxIterations = static_cast<int>(pow(Options::loadDistance * 2, 2));
 	unsigned layer = 1;
 	unsigned leg = 0;
 	int x = 0;
@@ -117,10 +109,10 @@ void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 		if (i != 0)
 			switch (leg)
 			{
-			case 0: ++x; if (x ==  layer)  ++leg;                break;
-			case 1: ++z; if (z ==  layer)  ++leg;                break;
+			case 0: ++x; if (x == layer)  ++leg;                break;
+			case 1: ++z; if (z == layer)  ++leg;                break;
 			case 2: --x; if (-x == layer)  ++leg;                break;
-			case 3: --z; if (-z == layer)  { leg = 0; ++layer; } break;
+			case 3: --z; if (-z == layer) { leg = 0; ++layer; } break;
 			}
 		int result = abs(z) + abs(x);
 		//Load distance
@@ -144,7 +136,7 @@ void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 void World::RenderWorld(MasterRenderer* masterRender)
 {
 	//TODO Fix this lul
-	for(int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; i++)
 		BuildMesh();
 
 	/*if (m_chunkColumns.empty())
@@ -158,14 +150,15 @@ void World::RenderWorld(MasterRenderer* masterRender)
 			continue;
 		m_chunkManager.GetChunk(column).RenderColumn(masterRender);
 	}
+	masterRender->DrawCube(m_gizmo);
 }
 
 //atualiza o estado do mundo, removendo colunas antigas fora do limite e
 //adicionando colunas novas que estao dentro do limite
 void World::UpdateWorld(const Player& player)
 {
-	int chunkPlayerX = floor(player.GetPosition().x / Options::chunkSize);
-	int chunkPlayerZ = floor(player.GetPosition().z / Options::chunkSize);
+	int chunkPlayerX = static_cast<int>(floor(player.GetPosition().x / Options::chunkSize));
+	int chunkPlayerZ = static_cast<int>(floor(player.GetPosition().z / Options::chunkSize));
 	VectorXZ playerChunkPos = { chunkPlayerX, chunkPlayerZ };
 	if (m_oldPlayerPos != playerChunkPos)
 	{
@@ -181,7 +174,7 @@ void World::UpdateWorld(const Player& player)
 	{
 		if (m_chunkManager.ChunkIsLoaded(coluna))
 			continue;
-		
+
 		m_chunkManager.LoadChunk(coluna);
 		break;
 	}
@@ -192,7 +185,7 @@ void World::SetBlock(const glm::ivec3& position, BlockId blockId)
 
 	if (OutOfBoundsY(position.y))
 		return;
-	//@TODO lista de blocos que precisam ser setados em chunks não existentes
+	//TODO lista de blocos que precisam ser setados em chunks não existentes
 	if (OutOfBoundsXZ(chunkPos))
 	{
 		m_chunkManager.AddToBlockQueue(chunkPos, std::pair<glm::ivec3, BlockId>(GetBlockPos(position), blockId));
@@ -202,32 +195,39 @@ void World::SetBlock(const glm::ivec3& position, BlockId blockId)
 	glm::ivec3 blockPos = GetBlockPos(position);
 	m_chunkManager.GetChunk(chunkPos).SetBlock(blockPos, blockId);
 
+	//TODO limpar código
 	//Rebuild neighbor mesh if in chunk border
-	VectorXZ neighbor1 = { chunkPos.x - 1, chunkPos.z     };
+	VectorXZ neighbor1 = { chunkPos.x - 1, chunkPos.z };
 	VectorXZ neighbor2 = { chunkPos.x    , chunkPos.z - 1 };
-	VectorXZ neighbor3 = { chunkPos.x + 1, chunkPos.z     };
+	VectorXZ neighbor3 = { chunkPos.x + 1, chunkPos.z };
 	VectorXZ neighbor4 = { chunkPos.x    , chunkPos.z + 1 };
 	//Horizontal
 	if (blockPos.x == 0)
 		if (!OutOfBounds(neighbor1, position.y))
-			m_chunkManager.GetChunk(neighbor1).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+			if(m_chunkManager.GetChunk(neighbor1).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor1).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
 	if (blockPos.z == 0)
 		if (!OutOfBounds(neighbor2, position.y))
-			m_chunkManager.GetChunk(neighbor2).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+			if (m_chunkManager.GetChunk(neighbor2).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor2).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
 	if (blockPos.x == 15)
 		if (!OutOfBounds(neighbor3, position.y))
-			m_chunkManager.GetChunk(neighbor3).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+			if (m_chunkManager.GetChunk(neighbor3).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor3).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
 	if (blockPos.z == 15)
 		if (!OutOfBounds(neighbor4, position.y))
-			m_chunkManager.GetChunk(neighbor4).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+			if (m_chunkManager.GetChunk(neighbor4).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor4).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
 
 	//Vertical
 	if ((blockPos.y % Options::chunkSize) == 0)
 		if (!OutOfBounds(chunkPos, position.y - Options::chunkSize))
-			m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) - 1).BuildMesh();
+			if (m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) - 1).HasMesh())
+				m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) - 1).BuildMesh();
 	if ((blockPos.y % Options::chunkSize) == 15)
 		if (!OutOfBounds(chunkPos, position.y + Options::chunkSize))
-			m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) + 1).BuildMesh();
+			if (m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) + 1).HasMesh())
+				m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) + 1).BuildMesh();
 
 	return;
 }

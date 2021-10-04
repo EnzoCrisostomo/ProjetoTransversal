@@ -1,7 +1,7 @@
-#include "CubeRenderer.h"
+#include "WireFrameRenderer.h"
 #include "Player/Player.h"
 
-CubeRenderer::CubeRenderer()
+WireframeRenderer::WireframeRenderer()
     :   m_texture("src/res/AtlasTeste.png"),
         m_shader("src/shaders/Basic.glsl")
 {
@@ -44,67 +44,36 @@ CubeRenderer::CubeRenderer()
             1, 0, 1,
     },
     {
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-        0.0f,  0.0f,
+        0.00f,  0.50f,
+        0.00f,  0.75f,
+        0.25f,  0.75f,
+        0.25f,  0.50f,
+
+        0.00f,  0.50f,
+        0.00f,  0.75f,
+        0.25f,  0.75f,
+        0.25f,  0.50f,
+
+        0.00f,  0.50f,
+        0.00f,  0.75f,
+        0.25f,  0.75f,
+        0.25f,  0.50f,
+
+        0.00f,  0.50f,
+        0.00f,  0.75f,
+        0.25f,  0.75f,
+        0.25f,  0.50f,
+
+        0.00f,  0.50f,
+        0.00f,  0.75f,
+        0.25f,  0.75f,
+        0.25f,  0.50f,
+
+        0.00f,  0.50f,
+        0.00f,  0.75f,
+        0.25f,  0.75f,
+        0.25f,  0.50f,
     },
-    /*{
-        0.00f,  0.50f,
-        0.00f,  0.75f,
-        0.25f,  0.75f,
-        0.25f,  0.50f,
-
-        0.00f,  0.50f,
-        0.00f,  0.75f,
-        0.25f,  0.75f,
-        0.25f,  0.50f,
-
-        0.00f,  0.50f,
-        0.00f,  0.75f,
-        0.25f,  0.75f,
-        0.25f,  0.50f,
-
-        0.00f,  0.50f,
-        0.00f,  0.75f,
-        0.25f,  0.75f,
-        0.25f,  0.50f,
-
-        0.00f,  0.50f,
-        0.00f,  0.75f,
-        0.25f,  0.75f,
-        0.25f,  0.50f,
-
-        0.00f,  0.50f,
-        0.00f,  0.75f,
-        0.25f,  0.75f,
-        0.25f,  0.50f,
-    },*/
     {
         0, 1, 2,
         2, 3, 0,
@@ -126,12 +95,12 @@ CubeRenderer::CubeRenderer()
     } });
 }
 
-void CubeRenderer::AddToQueue(const glm::vec3& position)
+void WireframeRenderer::AddToQueue(const glm::vec3& position)
 {
     m_cubes.push_back(position);
 }
 
-void CubeRenderer::RenderCubes(const Player& player)
+void WireframeRenderer::RenderWireframe(const Player& player)
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     m_texture.BindTexture();

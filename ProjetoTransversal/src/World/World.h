@@ -1,9 +1,7 @@
 #pragma once
 #include <queue>
 #include <unordered_map>
-#include "Chunk.h"
-#include "ChunkColumn.h"
-#include "ChunkManager.h"
+#include "Chunk/ChunkManager.h"
 
 class MasterRenderer;
 class Player;
@@ -27,6 +25,7 @@ private:
 	void BuildMesh();
 	void SpiralAroundPlayer(const VectorXZ playerChunkPos);
 
+	glm::ivec3 m_gizmo;
 	VectorXZ m_oldPlayerPos;
 	int m_seed;
 

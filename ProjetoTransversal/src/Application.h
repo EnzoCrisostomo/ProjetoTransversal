@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Player.h"
+#include "Player/Player.h"
 #include <GLFW/glfw3.h>
 #include "World/World.h"
 #include "Renderers/MasterRenderer.h"

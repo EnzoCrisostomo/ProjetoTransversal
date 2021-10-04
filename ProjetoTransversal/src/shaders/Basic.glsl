@@ -26,5 +26,8 @@ out vec4 FragColor;
 
 void main()
 {
-    FragColor = texture(textureData, TexCoordinates);
+    vec4 texColor = texture(textureData, TexCoordinates);
+    if(texColor.a == 0.0)
+        discard;
+    FragColor = texColor;
 }

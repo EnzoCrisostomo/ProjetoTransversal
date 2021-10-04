@@ -1,16 +1,17 @@
 #pragma once
 #include <array>
 #include "ChunkMesh.h"
-#include <glm/gtc/type_ptr.hpp>
+#include "Math/Vectors.h"
 #include "Options/Options.h"
-#include "Block.h"
+#include "World/Block/Block.h"
 
 class World;
+class ChunkColumn;
 
 class Chunk
 {
 public:
-	Chunk(World& world, int x = 0, int y = 0, int z = 0);
+	Chunk(World& world, ChunkColumn& chunkColumn, int x = 0, int y = 0, int z = 0);
 
 	~Chunk();
 
@@ -28,8 +29,11 @@ private:
 	const int GetIndex(int x, int y, int z) const;
 	
 	const glm::ivec3 GetGlobalPosition(int x, int y, int z) const;
+	const glm::ivec3 GetChunkBlockPosition(int x, int y, int z) const;
 
 	World& m_world;
+	ChunkColumn& m_chunkColumn;
+
 	std::array<BlockId, Options::chunkVolume> m_chunkData;
 	ChunkMesh m_mesh;
 	glm::vec3 m_position;
