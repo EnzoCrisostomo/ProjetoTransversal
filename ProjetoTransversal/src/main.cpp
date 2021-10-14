@@ -6,8 +6,8 @@
 
 int main()
 {
-    Application app(Options::windowName, (int)Options::windowWidth, (int)Options::windowHeight);
-    //Loop principal do programa
-    app.runLoop();
-    return 0;
+	Application app(Options::windowName, (int)Options::windowWidth, (int)Options::windowHeight);
+	//Loop principal do programa
+	app.runLoop();
+	return 0;
 }

@@ -36,7 +36,7 @@ World::World(Player& player)
 
 	srand((unsigned)time(0));
 
-	m_seed = 1337;//(rand() % std::numeric_limits<int>::max()) + 1;
+	m_seed = 1268885;//(rand() % std::numeric_limits<int>::max()) + 1;
 
 	m_oldPlayerPos = { chunkPlayerX, chunkPlayerZ };
 

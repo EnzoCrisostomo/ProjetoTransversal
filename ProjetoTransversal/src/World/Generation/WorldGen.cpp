@@ -58,17 +58,16 @@ namespace WorldGen
 
 	BlockId GetBlockId(int x, int z)
 	{
-		return BlockId::Grass;
-		//double biome = GetBiomeValue(x, z);
-		//if (biome > 0.7)
-		//	return BlockId::Stone;
-		//if (biome > 0.5)
-		//	return BlockId::Sand;
-		//if (biome > 0.3)
-		//	return BlockId::Grass;
-		//
-		////Menor que 0.3
-		//return BlockId::SnowGrass;
+		double biome = GetBiomeValue(x, z);
+		if (biome > 0.7)
+			return BlockId::Stone;
+		if (biome > 0.5)
+			return BlockId::Sand;
+		if (biome > 0.3)
+			return BlockId::Grass;
+		
+		//Menor que 0.3
+		return BlockId::SnowGrass;
 	}
 
 	double GetBiomeValue(int x, int z)

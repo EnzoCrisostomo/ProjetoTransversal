@@ -6,6 +6,6 @@ struct VectorXZ;
 
 namespace NoiseGenerator
 {
-	std::array<int, Options::chunkArea> GenerateNoise(VectorXZ chunkPos, int seed);
+	void Configure(int seed, int octaves, double lacunarity, double persistance, double scale);
+	std::array<double, Options::chunkArea> GenerateNoise(VectorXZ chunkPos);
 };
-

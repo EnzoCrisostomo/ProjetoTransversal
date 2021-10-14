@@ -10,9 +10,18 @@ namespace NoiseGenerator
 	double m_scale = 2.0;
 	FastNoiseLite m_noise;
 
-	std::array<int, Options::chunkArea> NoiseGenerator::GenerateNoise(VectorXZ chunkPos, int seed)
+	void Configure(int seed, int octaves, double lacunarity, double persistance, double scale)
 	{
-		std::array<int, Options::chunkArea> noiseMap = std::array<int, Options::chunkArea>();
+		m_noise.SetSeed(seed);
+		m_octaves = octaves;
+		m_lacunarity = lacunarity;
+		m_persistance = persistance;
+		m_scale = scale;
+	}
+
+	std::array<double, Options::chunkArea> GenerateNoise(VectorXZ chunkPos)
+	{
+		auto noiseMap = std::array<double, Options::chunkArea>();
 
 		//loops para iterar sobre todas as posicoes
 		for (int z = 0; z < Options::chunkSize; z++)
@@ -39,10 +48,8 @@ namespace NoiseGenerator
 				amplitude *= m_persistance;
 				frequency *= m_lacunarity;
 			}
-			noiseHeigth *= 40;
-			noiseHeigth += 40;
 			size_t mapIndex = static_cast<size_t>(x) * Options::chunkSize + z;
-			noiseMap.at(mapIndex) = static_cast<int>(noiseHeigth);
+			noiseMap.at(mapIndex) = noiseHeigth;
 		}
 
 		return noiseMap;

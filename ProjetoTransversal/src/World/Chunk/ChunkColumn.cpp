@@ -5,23 +5,41 @@
 #include "World/Generation/WorldGen.h"
 #include <math.h>
 #include <random>
+#include <fstream>
 
 ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<glm::ivec3, BlockId>> blocksToSet )
 	: m_world(world), m_position(position)
 {
-	//cria o mapa de altura a partir de ruido (noise)
-	//NoiseGenerator noiseGenerator(m_world.GetSeed());
-	//std::array<int, Options::chunkArea> heigtMap = noiseGenerator.GenerateNoise(Options::chunkSize, Options::chunkSize, m_position);
-
-	auto chunkDataMap = WorldGen::GenerateChunk(m_world.GetSeed(), m_position);
-
-	//std::cout << "Column pos: x[" << m_position.x << "], z[" << m_position.z << "]\n";
-
-	//cria as chunks e preenche com blocos de ar
 	m_chunks.reserve(Options::chunkColumnHeigth);
 	for (int y = 0; y < Options::chunkColumnHeigth; y++)
 		m_chunks.emplace_back(m_world, *this, m_position.x, y, m_position.z);
 
+	if (m_position == VectorXZ{ 0, 0 })
+	{
+		std::ifstream* myFile = new std::ifstream("data.bin", std::ios::in | std::ios::binary);
+		if (myFile->is_open())
+		{
+			for (auto& chunk : m_chunks)
+			{
+				auto& data = chunk.GetData();
+				myFile->read(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
+				myFile->seekg(myFile->tellg() + static_cast<std::streampos>(sizeof(BlockId) * Options::chunkVolume));
+			}
+			return;
+		}
+		myFile->close();
+		delete myFile;
+	}
+	//cria o mapa de altura a partir de ruido (noise)
+	//NoiseGenerator noiseGenerator(m_world.GetSeed());
+	//std::array<int, Options::chunkArea> heigtMap = noiseGenerator.GenerateNoise(Options::chunkSize, Options::chunkSize, m_position);
+
+
+	//std::cout << "Column pos: x[" << m_position.x << "], z[" << m_position.z << "]\n";
+
+	//cria as chunks e preenche com blocos de ar
+
+	auto chunkDataMap = WorldGen::GenerateChunk(m_world.GetSeed(), m_position);
 
 	//loops para inserir os blocos de acordo com o mapa de altura da coluna
 	for (int y = 0; y < Options::chunkColumnHeigth * Options::chunkSize; y++)
@@ -37,8 +55,8 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 		//Altura maior que o mapa de altura
 		if (y > heigthXZ)
 		{
-			/*if (y < Options::waterLevel)
-				SetBlock(x, y, z, BlockId::Water);*/
+			if (y < Options::waterLevel)
+				SetBlock(x, y, z, BlockId::Water);
 			continue;
 		}
 		//Altura igual ao mapa de altura
@@ -84,6 +102,21 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 //Destrutor
 ChunkColumn::~ChunkColumn()
 {
+	if (m_position == VectorXZ{0, 0})
+	{
+		std::ofstream* myFile = new std::ofstream("data.bin", std::ios::out | std::ios::binary);
+		if (myFile->is_open())
+		{
+			for (auto& chunk : m_chunks)
+			{
+				auto& data = chunk.GetData();
+				myFile->write(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
+				myFile->seekp(myFile->tellp() + static_cast<std::streampos>(sizeof(BlockId) * Options::chunkVolume));
+			}
+		}
+		myFile->close();
+		delete myFile;
+	}
 }
 
 //retorna o id do bloco da posicao dada

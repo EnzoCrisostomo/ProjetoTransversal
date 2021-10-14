@@ -45,6 +45,11 @@ const BlockId Chunk::GetBlock(const glm::ivec3& position) const
 	return GetBlock(position.x, position.y, position.z);
 }
 
+std::array<BlockId, Options::chunkVolume>& Chunk::GetData()
+{
+	return m_chunkData;
+}
+
 //Verifica se a chunk já possui uma mesh construida
 const bool Chunk::HasMesh() const
 {

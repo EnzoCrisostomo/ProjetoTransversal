@@ -19,6 +19,7 @@ public:
 	glm::vec3 GetLocation() const;
 	const BlockId GetBlock(int x, int y, int z) const;
 	const BlockId GetBlock(const glm::ivec3& position) const;
+	std::array<BlockId, Options::chunkVolume>& GetData();
 	const bool HasMesh() const;
 
 	void SetBlock(int x, int y, int z, BlockId block);
