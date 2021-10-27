@@ -1,13 +1,11 @@
 #pragma once
 
-
-#include <iostream>
 #include <glad/glad.h>
+#include <string>
 
 class Texture
 {
 public:
-	Texture() = default;
 	Texture(const std::string& filePath);
 
 	~Texture();

@@ -16,6 +16,9 @@ struct VectorXZ
 	void operator-=(const VectorXZ& other);
 	VectorXZ operator+(const VectorXZ& other) const;
 	VectorXZ operator-(const VectorXZ& other) const;
+	
+	VectorXZ operator+(const int& amount) const;
+	VectorXZ operator-(const int& amount) const;
 };
 
 //criar especializacao de template em std::hash

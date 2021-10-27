@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include <queue>
+#include "World/Generation/Region.h"
 #include "Chunk.h"
-#include "VectorXZ.h"
 #include "Renderers/MasterRenderer.h"
 
 class World;
@@ -10,7 +10,7 @@ class World;
 class ChunkColumn
 {
 public:
-	ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<glm::ivec3, BlockId>> blocksToSet);
+	ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<glm::ivec3, BlockId>> blocksToSet, Region* region);
 	~ChunkColumn();
 
 	BlockId GetBlock(const glm::ivec3& position) const;
@@ -24,7 +24,10 @@ public:
 	bool HasFullMesh();
 private:
 	bool OutOfBounds(int x, int y, int z) const;
+	const glm::ivec3 GetGlobalPosition(int x, int y, int z) const;
+	void TryToGenerateTree(int x, int y, int z);
 
+	Region* m_region;
 	World& m_world;
 	VectorXZ m_position;
 	std::vector<Chunk> m_chunks;

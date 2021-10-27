@@ -1,6 +1,6 @@
 #pragma once
-#include "glad/glad.h"
-#include <iostream>
+#include <glad/glad.h>
+
 class VertexArray
 {
 public:

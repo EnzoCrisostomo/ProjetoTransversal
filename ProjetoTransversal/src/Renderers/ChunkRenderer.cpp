@@ -1,12 +1,11 @@
 #include "ChunkRenderer.h"
-#include "Player.h"
-#include "World/ChunkMesh.h"
+#include "Player/Player.h"
+#include "World/Chunk/ChunkMesh.h"
 
 ChunkRenderer::ChunkRenderer()
+    :   m_texture("src/res/AtlasTeste.png"),
+        m_shader("src/shaders/Basic.glsl")
 {
-    //TODO inicializaton list
-    m_texture.loadFromFile("src/res/Atlas.png");
-    m_shader.LoadFromFile("src/shaders/Basic.glsl");
 }
 
 void ChunkRenderer::AddToQueue(const ChunkMesh& chunk)
@@ -14,12 +13,13 @@ void ChunkRenderer::AddToQueue(const ChunkMesh& chunk)
     m_chunks.push_back(&chunk);
 }
 
-void ChunkRenderer::RenderChunks(const Player& player)
+void ChunkRenderer::RenderChunks(const Player player)
 {
+    static unsigned int numRenders = 0;
+    glEnable(GL_CULL_FACE);
     if (m_chunks.empty())
         return;
 
-    glEnable(GL_CULL_FACE);
     m_texture.BindTexture();
     m_shader.Bind();
     m_shader.loadProjectionMatrix(player.GetProjectionMatrix());
@@ -27,6 +27,7 @@ void ChunkRenderer::RenderChunks(const Player& player)
 
     for (const ChunkMesh* chunk : m_chunks)
     {
+        numRenders++;
         chunk->GetModel().BindVao();
 
         glm::mat4 model = glm::mat4(1.0f);

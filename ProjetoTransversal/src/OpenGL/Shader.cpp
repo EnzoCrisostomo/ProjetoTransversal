@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <exception>
+#include <iostream>
 
 enum class ShaderType
 {

@@ -1,17 +1,18 @@
 #pragma once
+#include <string>
 //Struct que contém todas opções do programa
 
 struct Options
 {
 	//Window
-	static			 float	windowWidth;
-	static			 float	windowHeight;
+	static			 double	windowWidth;
+	static			 double	windowHeight;
 	static const	 char*  windowName;
 
 	//Player
-	static const	 float  fov;
+	static const	 double fov;
 	static const	 double mouseSensibility;
-	static const	 float  playerSpeed;
+	static const	 double playerSpeed;
 	static const	 int    playerGamemode;
 
 	//Chunk
@@ -23,6 +24,14 @@ struct Options
 	//World
 	static const     int	viewDistance;
 	static const     int	loadDistance;
+	static const     int	waterLevel;
+
+	//FileSys
+	static const	 std::string dataPath;
+	static const	 std::string savePath;
+	static			 std::string worldRegionsPath;
+	static constexpr bool	saveEnabled = true;
+	static constexpr int	regionSize = 8;
 
 	static bool teste;
 

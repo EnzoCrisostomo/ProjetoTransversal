@@ -1,12 +1,10 @@
 #include "CubeRenderer.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 CubeRenderer::CubeRenderer()
+    :   m_texture("src/res/AtlasTeste.png"),
+        m_shader("src/shaders/Basic.glsl")
 {
-    //TODO inicializaton list
-    m_texture.loadFromFile("src/res/Atlas.png");
-    m_shader.LoadFromFile("src/shaders/Basic.glsl");
-
     m_model.SetData({
     {
             //Front

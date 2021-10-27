@@ -1,6 +1,5 @@
+#include <glad/glad.h>
 #include "VertexArray.h"
-#include "glad/glad.h"
-#include <iostream>
 
 
 VertexArray::~VertexArray()

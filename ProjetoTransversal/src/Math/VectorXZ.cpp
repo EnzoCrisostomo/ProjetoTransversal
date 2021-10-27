@@ -43,3 +43,13 @@ VectorXZ VectorXZ::operator-(const VectorXZ& other) const
 {
     return VectorXZ(this->x - other.x, this->z - other.z);
 }
+
+VectorXZ VectorXZ::operator+(const int& amount) const
+{
+    return VectorXZ(this->x + amount, this->z + amount);
+}
+
+VectorXZ VectorXZ::operator-(const int& amount) const
+{
+    return VectorXZ(this->x - amount, this->z - amount);
+}

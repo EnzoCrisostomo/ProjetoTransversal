@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OpenGL/Model.h"
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
 
 class ChunkMesh : public Mesh
 {

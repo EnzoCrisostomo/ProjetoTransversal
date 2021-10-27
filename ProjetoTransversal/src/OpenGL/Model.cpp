@@ -1,6 +1,6 @@
 #include "Model.h"
 
-//#include "VertexBufferLayout.h"
+#include "VertexBufferLayout.h"
 
 Model::Model(Mesh& mesh)
 {
@@ -21,7 +21,7 @@ void Model::SetData(const Mesh& mesh)
 	//TODO Classe para layouts
 	//VertexBufferLayout layout;
 	m_vertexPositions.SetData(mesh.vertexPositions.data(),
-		mesh.vertexPositions.size());
+		static_cast<unsigned int>(mesh.vertexPositions.size()));
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 
@@ -30,7 +30,7 @@ void Model::SetData(const Mesh& mesh)
 	//layout.setLayout();
 
 	m_vertexTextureCoordinates.SetData(mesh.textureCoordinates.data(),
-		mesh.textureCoordinates.size());
+		static_cast<unsigned int>(mesh.textureCoordinates.size()));
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 
@@ -39,7 +39,7 @@ void Model::SetData(const Mesh& mesh)
 	//layout.setLayout();
 
 	m_indexBuffer.SetData(mesh.indices.data(),
-		mesh.indices.size());
+		static_cast<unsigned int>(mesh.indices.size()));
 
 }
 

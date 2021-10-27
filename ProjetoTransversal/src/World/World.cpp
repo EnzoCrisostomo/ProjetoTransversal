@@ -1,16 +1,20 @@
 #include "World.h"
 #include "Renderers/MasterRenderer.h"
-#include "Player.h"
+#include "Player/Player.h"
 #include <limits>
+#include <random>
+#include <ctime>
+#include <string>
+#include <filesystem>
 
 namespace
 {
 	VectorXZ GetChunkPos(const glm::ivec3& position)
 	{
-		float fPosX = static_cast<float>(position.x);
-		float fPosZ = static_cast<float>(position.z);
-		int chunkX = floor(fPosX / Options::chunkSize);
-		int chunkZ = floor(fPosZ / Options::chunkSize);
+		double fPosX = static_cast<double>(position.x);
+		double fPosZ = static_cast<double>(position.z);
+		int chunkX  = static_cast<int>(floor(fPosX / Options::chunkSize));
+		int chunkZ  = static_cast<int>(floor(fPosZ / Options::chunkSize));
 		return { chunkX, chunkZ };
 	}
 
@@ -24,42 +28,147 @@ namespace
 		if (modZ < 0)
 			modZ += Options::chunkSize;
 
-
 		return { modX, position.y, modZ };
-	}
-	glm::ivec3 Floor(const glm::vec3& pos)
-	{
-		int x = static_cast<int>(floor(pos.x));
-		int y = static_cast<int>(floor(pos.y));
-		int z = static_cast<int>(floor(pos.z));
-		return glm::ivec3(x, y, z);
 	}
 }
 
-World::World(Player& player)
-	: m_chunkManager(*this)
+World::World(Player& player, std::string worldName)
+	: m_chunkManager(*this), m_name(worldName)
 {
-	int chunkPlayerX = floor(player.GetPosition().x / Options::chunkSize);
-	int chunkPlayerZ = floor(player.GetPosition().z / Options::chunkSize);
+	m_playerPont = &player;
+	LoadFromFile();
 
-	srand((unsigned)time(0));
+	int chunkPlayerX = static_cast<int>(floor(player.GetPosition().x / Options::chunkSize));
+	int chunkPlayerZ = static_cast<int>(floor(player.GetPosition().z / Options::chunkSize));
 
-	m_seed = (rand() % std::numeric_limits<int>::max()) + 1;
-
-	m_oldPlayerPos = { chunkPlayerX, chunkPlayerZ };
-
-	SpiralAroundPlayer({ chunkPlayerX, chunkPlayerZ });
+	m_oldPlayerPos = VectorXZ{ chunkPlayerX, chunkPlayerZ };
+	SpiralAroundPlayer(VectorXZ{ chunkPlayerX, chunkPlayerZ });
 }
 
 World::~World()
 {
-	std::cout << "World destroyed!\n";
+	SaveInFile();
+}
+
+bool World::LoadFromFile()
+{
+	const char* nomeDat = "world.dat";
+	m_worldPath = std::string(Options::savePath + m_name + std::string("/"));
+	Options::worldRegionsPath = m_worldPath + std::string("regions/");
+
+	std::ifstream arquivoMundo(m_worldPath + std::string(nomeDat));
+	if (arquivoMundo.is_open())
+	{
+		std::cout << "=========\nLoading " + m_name + "!\n";
+
+		arquivoMundo >> m_seed;
+		std::cout << "Seed: " << m_seed << ".\n";
+
+		double posPlayerX;
+		double posPlayerY;
+		double posPlayerZ;
+		arquivoMundo >> posPlayerX >> posPlayerY >> posPlayerZ;
+		std::cout << "PosPlayer: [" << posPlayerX << "],[" << posPlayerY << "],[" << posPlayerZ << "].\n";
+		m_playerPont->SetPosition(glm::dvec3{ posPlayerX, posPlayerY, posPlayerZ });
+
+		double cameraPlayerX;
+		double cameraPlayerY;
+		double cameraPlayerZ;
+		arquivoMundo >> cameraPlayerX >> cameraPlayerY >> cameraPlayerZ;
+		std::cout << "CameraPlayer: [" << cameraPlayerX << "],[" << cameraPlayerY << "],[" << cameraPlayerZ << "].\n";
+		m_playerPont->SetCamera(glm::dvec3{ cameraPlayerX, cameraPlayerY, cameraPlayerZ });
+
+		std::string dataCriacao;
+		arquivoMundo.ignore();
+		getline(arquivoMundo, dataCriacao);
+		std::cout << "Date: " << dataCriacao << ".\n";
+		std::cout << "=========\n";
+
+		//seed ok
+		//pos player ok
+		//camerafront player ok
+		//data e hora de criacao ok
+		// 
+		//modo do mundo
+		//hora
+		//dia 
+		//data e hora do ultimo save ~ok
+	}
+	else
+	{
+		std::cout << "Mundo nao existe, criando novo mundo.\n";
+		std::filesystem::create_directory(m_worldPath);
+		std::filesystem::create_directory(Options::worldRegionsPath);
+		std::ofstream arquivoEscrita(m_worldPath + std::string(nomeDat));
+
+		std::random_device rd;
+		std::mt19937 randomGenerator(rd());
+
+		std::uniform_int_distribution<> distrPlayer(-100, 100);
+		double playerRandPosX = distrPlayer(randomGenerator) + 0.5;
+		double playerRandPosZ = distrPlayer(randomGenerator) + 0.5;
+		std::cout << "playerRandPosX: " << playerRandPosX << '\n';
+		std::cout << "playerRandPosZ: " << playerRandPosZ << '\n';
+
+		int chunkPlayerX = static_cast<int>(floor(playerRandPosX / Options::chunkSize));
+		int chunkPlayerZ = static_cast<int>(floor(playerRandPosZ / Options::chunkSize));
+
+		std::uniform_int_distribution<> distrSeed(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+		m_seed = distrSeed(randomGenerator);
+		m_chunkManager.LoadChunk(VectorXZ{ chunkPlayerX, chunkPlayerZ });
+
+		auto& dimesions = m_playerPont->GetDimensions();
+		double y = dimesions.bottom + 4;
+		while (this->GetBlock(Floor(glm::vec3{ playerRandPosX, -dimesions.bottom + y, playerRandPosZ })) != BlockId::Air
+			&& this->GetBlock(Floor(glm::vec3{ playerRandPosX,  dimesions.top + y,    playerRandPosZ })) != BlockId::Air)
+		{
+			y++;
+		}
+		m_playerPont->SetPosition(glm::dvec3{ playerRandPosX, ++y,  playerRandPosZ });
+
+		time_t now = time(NULL);
+		char str[26] = {};
+		ctime_s(str, 26, &now);
+		std::cout << "Data e Hora: " << std::string(str) << '\n';
+
+		auto& cameraFront = m_playerPont->GetCameraFront();
+
+		arquivoEscrita << m_seed << '\n';
+		arquivoEscrita << playerRandPosX << " " << y << " " << playerRandPosZ << '\n';
+		arquivoEscrita << cameraFront.x << " " << cameraFront.y << " " << cameraFront.z << '\n';
+		arquivoEscrita << str << '\n';
+
+		arquivoEscrita.close();
+	}
+	arquivoMundo.close();
+	return false;
+}
+
+bool World::SaveInFile()
+{
+	const char* nomeDat = "world.dat";
+	std::ofstream arquivoEscrita(m_worldPath + std::string(nomeDat), std::ios::out, std::ios::trunc);
+
+	time_t now = time(NULL);
+	char str[26] = {};
+	ctime_s(str, 26, &now);
+
+	auto& playerPos = m_playerPont->GetPosition();
+	auto& cameraFront = m_playerPont->GetCameraFront();
+
+	arquivoEscrita << m_seed << '\n';
+	arquivoEscrita << playerPos.x << " " << playerPos.y << " " << playerPos.z << '\n';
+	arquivoEscrita << cameraFront.x << " " << cameraFront.y << " " << cameraFront.z << '\n';
+	arquivoEscrita << str << '\n';
+
+	arquivoEscrita.close();
+	return false;
 }
 
 //Checa para ver se a posição existe no mundo
 const bool World::OutOfBounds(VectorXZ chunkPos, int y) const
 {
-	if (y < 0 || y > Options::chunkSize * Options::chunkColumnHeigth)
+	if (y < 0 || y >= Options::chunkSize * Options::chunkColumnHeigth)
 		return true;
 	if (!m_chunkManager.ChunkIsLoaded(chunkPos))
 		return true;
@@ -77,7 +186,7 @@ const bool World::OutOfBoundsXZ(VectorXZ chunkPos) const
 
 const bool World::OutOfBoundsY(int y) const
 {
-	if (y < 0 || y > Options::chunkSize * Options::chunkColumnHeigth)
+	if (y < 0 || y >= Options::chunkSize * Options::chunkColumnHeigth)
 		return true;
 
 	return false;
@@ -106,7 +215,7 @@ void World::BuildMesh()
 void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 {
 	//Loop para determinar quais chunks estao na viewDistance e na loadDistance
-	int maxIterations = pow(Options::loadDistance * 2, 2);
+	int maxIterations = static_cast<int>(pow(Options::loadDistance * 2, 2));
 	unsigned layer = 1;
 	unsigned leg = 0;
 	int x = 0;
@@ -117,10 +226,10 @@ void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 		if (i != 0)
 			switch (leg)
 			{
-			case 0: ++x; if (x ==  layer)  ++leg;                break;
-			case 1: ++z; if (z ==  layer)  ++leg;                break;
+			case 0: ++x; if (x == layer)  ++leg;                break;
+			case 1: ++z; if (z == layer)  ++leg;                break;
 			case 2: --x; if (-x == layer)  ++leg;                break;
-			case 3: --z; if (-z == layer)  { leg = 0; ++layer; } break;
+			case 3: --z; if (-z == layer) { leg = 0; ++layer; } break;
 			}
 		int result = abs(z) + abs(x);
 		//Load distance
@@ -144,7 +253,7 @@ void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 void World::RenderWorld(MasterRenderer* masterRender)
 {
 	//TODO Fix this lul
-	for(int i = 0; i < 8; i++)
+	//for (int i = 0; i < 8; i++)
 		BuildMesh();
 
 	/*if (m_chunkColumns.empty())
@@ -158,14 +267,15 @@ void World::RenderWorld(MasterRenderer* masterRender)
 			continue;
 		m_chunkManager.GetChunk(column).RenderColumn(masterRender);
 	}
+	masterRender->DrawCube(m_gizmo);
 }
 
 //atualiza o estado do mundo, removendo colunas antigas fora do limite e
 //adicionando colunas novas que estao dentro do limite
 void World::UpdateWorld(const Player& player)
 {
-	int chunkPlayerX = floor(player.GetPosition().x / Options::chunkSize);
-	int chunkPlayerZ = floor(player.GetPosition().z / Options::chunkSize);
+	int chunkPlayerX = static_cast<int>(floor(player.GetPosition().x / Options::chunkSize));
+	int chunkPlayerZ = static_cast<int>(floor(player.GetPosition().z / Options::chunkSize));
 	VectorXZ playerChunkPos = { chunkPlayerX, chunkPlayerZ };
 	if (m_oldPlayerPos != playerChunkPos)
 	{
@@ -181,7 +291,7 @@ void World::UpdateWorld(const Player& player)
 	{
 		if (m_chunkManager.ChunkIsLoaded(coluna))
 			continue;
-		
+
 		m_chunkManager.LoadChunk(coluna);
 		break;
 	}
@@ -192,42 +302,49 @@ void World::SetBlock(const glm::ivec3& position, BlockId blockId)
 
 	if (OutOfBoundsY(position.y))
 		return;
-	//@TODO lista de blocos que precisam ser setados em chunks não existentes
+	//TODO lista de blocos que precisam ser setados em chunks não existentes
 	if (OutOfBoundsXZ(chunkPos))
 	{
-		m_chunkManager.AddToBlockQueue(chunkPos, std::pair<glm::ivec3, BlockId>(GetBlockPos(position), blockId));
+		m_chunkManager.AddToBlockQueue(chunkPos, std::pair(GetBlockPos(position), blockId));
 		return;
 	}
 
 	glm::ivec3 blockPos = GetBlockPos(position);
 	m_chunkManager.GetChunk(chunkPos).SetBlock(blockPos, blockId);
 
+	//TODO limpar código
 	//Rebuild neighbor mesh if in chunk border
-	VectorXZ neighbor1 = { chunkPos.x - 1, chunkPos.z     };
+	VectorXZ neighbor1 = { chunkPos.x - 1, chunkPos.z };
 	VectorXZ neighbor2 = { chunkPos.x    , chunkPos.z - 1 };
-	VectorXZ neighbor3 = { chunkPos.x + 1, chunkPos.z     };
+	VectorXZ neighbor3 = { chunkPos.x + 1, chunkPos.z };
 	VectorXZ neighbor4 = { chunkPos.x    , chunkPos.z + 1 };
 	//Horizontal
 	if (blockPos.x == 0)
 		if (!OutOfBounds(neighbor1, position.y))
-			m_chunkManager.GetChunk(neighbor1).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+			if(m_chunkManager.GetChunk(neighbor1).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor1).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
 	if (blockPos.z == 0)
 		if (!OutOfBounds(neighbor2, position.y))
-			m_chunkManager.GetChunk(neighbor2).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
-	if (blockPos.x == 15)
+			if (m_chunkManager.GetChunk(neighbor2).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor2).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+	if (blockPos.x == Options::chunkSize - 1)
 		if (!OutOfBounds(neighbor3, position.y))
-			m_chunkManager.GetChunk(neighbor3).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
-	if (blockPos.z == 15)
+			if (m_chunkManager.GetChunk(neighbor3).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor3).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+	if (blockPos.z == Options::chunkSize - 1)
 		if (!OutOfBounds(neighbor4, position.y))
-			m_chunkManager.GetChunk(neighbor4).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
+			if (m_chunkManager.GetChunk(neighbor4).GetChunk(blockPos.y / Options::chunkSize).HasMesh())
+				m_chunkManager.GetChunk(neighbor4).GetChunk(blockPos.y / Options::chunkSize).BuildMesh();
 
 	//Vertical
 	if ((blockPos.y % Options::chunkSize) == 0)
 		if (!OutOfBounds(chunkPos, position.y - Options::chunkSize))
-			m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) - 1).BuildMesh();
-	if ((blockPos.y % Options::chunkSize) == 15)
+			if (m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) - 1).HasMesh())
+				m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) - 1).BuildMesh();
+	if ((blockPos.y % Options::chunkSize) == Options::chunkSize - 1)
 		if (!OutOfBounds(chunkPos, position.y + Options::chunkSize))
-			m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) + 1).BuildMesh();
+			if (m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) + 1).HasMesh())
+				m_chunkManager.GetChunk(chunkPos).GetChunk((blockPos.y / Options::chunkSize) + 1).BuildMesh();
 
 	return;
 }

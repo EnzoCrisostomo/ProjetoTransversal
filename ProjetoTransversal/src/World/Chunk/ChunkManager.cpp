@@ -1,5 +1,6 @@
 #include "ChunkManager.h"
-#include "World.h"
+#include "World/World.h"
+
 
 ChunkManager::ChunkManager(World& world)
 	: m_world(world)
@@ -28,16 +29,30 @@ void ChunkManager::LoadChunk(VectorXZ pos)
 	if (ChunkIsLoaded(pos))
 		return;
 
+	VectorXZ regionPos = GetRegion(pos);
+	Region* region = nullptr;
+
+	if (RegionIsLoaded(regionPos))
+	{
+		region = &m_regions.at(regionPos);
+	}
+	else
+	{
+		m_regions.try_emplace(regionPos, regionPos);
+		region = &m_regions.at(regionPos);
+	}
+
 	std::vector<std::pair<glm::ivec3, BlockId>> blocos;
 	if (m_blocksToSet.find(pos) != m_blocksToSet.end())
 	{
 		blocos = m_blocksToSet.at(pos);
+
+		//TODO maybe erase instead of clear vector
+		//TODO Save blocksToSet in files
 		m_blocksToSet.at(pos).clear();
 	}
 
-	m_chunkColumns.emplace(std::piecewise_construct,
-		std::forward_as_tuple(pos),
-		std::forward_as_tuple(m_world, pos, blocos));
+	m_chunkColumns.try_emplace(pos,m_world, pos, blocos, region);
 }
 
 //Overload da função LoadChunk com argumentos distribuidos de forma diferente
@@ -72,27 +87,23 @@ void ChunkManager::UnloadChunk(int x, int z)
 }
 
 //Descarrega chunks que estão longe do jogador
-void ChunkManager::UnloadFarChunks(VectorXZ playerPos)
+void ChunkManager::UnloadFarChunks(VectorXZ playerChunkPos)
 {
-	int maxDistX = playerPos.x + Options::loadDistance + 2;
-	int maxDistZ = playerPos.z + Options::loadDistance + 2;
-	int minDistX = playerPos.x - Options::loadDistance + 2;
-	int minDistZ = playerPos.z - Options::loadDistance + 2;
+	int maxDistX = playerChunkPos.x + Options::loadDistance + 2;
+	int maxDistZ = playerChunkPos.z + Options::loadDistance + 2;
+	int minDistX = playerChunkPos.x - Options::loadDistance + 2;
+	int minDistZ = playerChunkPos.z - Options::loadDistance + 2;
 
-	for (auto& column : m_chunkColumns)
-	{
-		if (column.first.x > maxDistX || column.first.x < minDistX)
-		{
-			UnloadChunk(column.first);
-			return UnloadFarChunks(playerPos);
-		}
+	VectorXZ maxDist = playerChunkPos + Options::loadDistance + 2;
+	VectorXZ minDist = playerChunkPos - Options::loadDistance + 2;
 
-		else if (column.first.z > maxDistZ || column.first.z < minDistZ)
-		{
-			UnloadChunk(column.first);
-			return UnloadFarChunks(playerPos);
-		}
-	}
+	UnloadChunks(maxDist, minDist);
+
+	VectorXZ maxRegion = GetRegion(VectorXZ{ maxDistX, maxDistZ });
+	VectorXZ minRegion = GetRegion(VectorXZ{ minDistX, minDistZ });
+
+	UnloadRegions(maxRegion, minRegion);
+
 	return;
 }
 
@@ -119,4 +130,51 @@ const bool ChunkManager::NeighborsAreLoaded(VectorXZ chunkPos) const
 		return false;
 
 	return true;
+}
+
+void ChunkManager::UnloadRegion(VectorXZ pos)
+{
+	if (m_regions.find(pos) != m_regions.end())
+	{
+		m_regions.erase(pos);
+	}
+}
+
+const bool ChunkManager::RegionIsLoaded(VectorXZ pos) const
+{
+	return m_regions.find(pos) != m_regions.end();
+}
+
+void ChunkManager::UnloadChunks(VectorXZ maxDist, VectorXZ minDist)
+{
+	for (auto& column : m_chunkColumns)
+	{
+		if (column.first.x > maxDist.x || column.first.x < minDist.x || 
+			column.first.z > maxDist.z || column.first.z < minDist.z)
+		{
+			UnloadChunk(column.first);
+			return UnloadChunks(maxDist, minDist);
+		}
+	}
+	return;
+}
+
+void ChunkManager::UnloadRegions(VectorXZ maxRegion, VectorXZ minRegion)
+{
+	for (auto& region : m_regions)
+	{
+		if (region.first.x > maxRegion.x || region.first.x < minRegion.x || 
+			region.first.z > maxRegion.z || region.first.z < minRegion.z)
+		{
+			UnloadRegion(region.first);
+			return UnloadRegions(maxRegion, minRegion);
+		}
+	}
+	return;
+}
+
+VectorXZ ChunkManager::GetRegion(const VectorXZ& chunkPos) const
+{
+	return VectorXZ({static_cast<int>(floor(static_cast<float>(chunkPos.x) / Options::regionSize)),
+					 static_cast<int>(floor(static_cast<float>(chunkPos.z) / Options::regionSize)) });
 }

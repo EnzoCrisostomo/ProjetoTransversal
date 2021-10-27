@@ -1,12 +1,10 @@
 #include "quadRenderer.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 QuadRenderer::QuadRenderer()
+    :   m_texture("src/res/AtlasTeste.png"),
+        m_shader("src/shaders/Basic.glsl")
 {
-    //TODO inicializaton list
-	m_texture.loadFromFile("src/res/Atlas.png");
-    m_shader.LoadFromFile("src/shaders/Basic.glsl");
-
     m_model.SetData({
     {
         -0.5f, -0.5f,  0.0f,

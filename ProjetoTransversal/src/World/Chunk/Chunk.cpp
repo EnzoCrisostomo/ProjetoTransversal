@@ -1,11 +1,11 @@
 #include "Chunk.h"
-#include "World.h"
-#include "World/ChunkMeshBuilder.h"
+#include "World/World.h"
+#include "ChunkMeshBuilder.h"
 #include "Options/Options.h"
 
 //Construtor
-Chunk::Chunk(World& world, int x, int y, int z)
-	: m_world(world)
+Chunk::Chunk(World& world, ChunkColumn& chunkColumn, int x, int y, int z)
+	: m_world(world), m_chunkColumn(chunkColumn)
 {
 	m_position = { x , y, z };
 	m_chunkData.fill(BlockId::Air);
@@ -34,7 +34,7 @@ const BlockId Chunk::GetBlock(int x, int y, int z) const
 {
 	//Caso esteja fora da chunk acessa o bloco pela posição global
 	if (OutOfBounds(x) || OutOfBounds(y) || OutOfBounds(z))
-		return m_world.GetBlock(GetGlobalPosition(x, y, z));
+		return m_chunkColumn.GetBlock(GetChunkBlockPosition(x, y, z));
 
 	return m_chunkData[GetIndex(x, y, z)];
 }
@@ -43,6 +43,11 @@ const BlockId Chunk::GetBlock(int x, int y, int z) const
 const BlockId Chunk::GetBlock(const glm::ivec3& position) const
 {
 	return GetBlock(position.x, position.y, position.z);
+}
+
+std::array<BlockId, Options::chunkVolume>& Chunk::GetData()
+{
+	return m_chunkData;
 }
 
 //Verifica se a chunk já possui uma mesh construida
@@ -54,10 +59,8 @@ const bool Chunk::HasMesh() const
 //Muda o bloco na posição(x, y, z) da chunk, e marca que a mesh precisa ser reconstruida
 void Chunk::SetBlock(int x, int y, int z, BlockId block)
 {
-	//@TODO consertar bug de render
 	if (OutOfBounds(x) || OutOfBounds(y) || OutOfBounds(z))
-		return;
-		//return m_world.SetBlock(GetGlobalPosition(x, y, z), block);
+		return m_chunkColumn.SetBlock(GetChunkBlockPosition(x, y, z), block);
 
 	m_hasMesh = false;
 	m_chunkData[GetIndex(x, y, z)] = block;
@@ -91,4 +94,9 @@ const glm::ivec3 Chunk::GetGlobalPosition(int x, int y, int z) const
 	return glm::ivec3(m_position.x * Options::chunkSize + x,
 					 m_position.y * Options::chunkSize + y,
 					 m_position.z * Options::chunkSize + z);
+}
+
+const glm::ivec3 Chunk::GetChunkBlockPosition(int x, int y, int z) const
+{
+	return glm::ivec3(x, m_position.y * Options::chunkSize + y, z);
 }

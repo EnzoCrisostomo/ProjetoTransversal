@@ -4,10 +4,14 @@
 class BlockDatabase
 {
 public:
-	BlockDatabase();
-
+	static BlockDatabase& Get()
+	{
+		static BlockDatabase instance;
+		return instance;
+	}
 	const Block& GetBlockInfo(const BlockId& blockId) const;
 private:
+	BlockDatabase();
 	std::vector<Block> m_blockData;
 };
 
