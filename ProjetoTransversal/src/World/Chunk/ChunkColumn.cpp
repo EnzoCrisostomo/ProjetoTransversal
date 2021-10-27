@@ -56,11 +56,11 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 			{
 				std::streampos startPos = getFileStartIndex(regionIndex);
 				m_region->file->seekg(startPos);
-			for (auto& chunk : m_chunks)
-			{
-				auto& data = chunk.GetData();
+				for (auto& chunk : m_chunks)
+				{
+					auto& data = chunk.GetData();
 					m_region->file->read(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
-			}
+				}
 				/*std::cout << "Estados Apos ler\n";
 				std::cout << "Good: " << m_region->file->good() << "\n";
 				std::cout << "Fail: " << m_region->file->fail() << "\n";
@@ -71,73 +71,60 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 		{
 			std::cout << "Could not open file!\n";
 		}
-		myFile->close();
-		delete myFile;
 	}
 
 	if (!hasData)
 	{
-	//cria o mapa de altura a partir de ruido (noise)
-	//NoiseGenerator noiseGenerator(m_world.GetSeed());
-	//std::array<int, Options::chunkArea> heigtMap = noiseGenerator.GenerateNoise(Options::chunkSize, Options::chunkSize, m_position);
+		//cria o mapa de altura a partir de ruido (noise)
+		auto chunkDataMap = WorldGen::GenerateChunk(m_world.GetSeed(), m_position);
 
-
-	//std::cout << "Column pos: x[" << m_position.x << "], z[" << m_position.z << "]\n";
-
-	//cria as chunks e preenche com blocos de ar
-
-	auto chunkDataMap = WorldGen::GenerateChunk(m_world.GetSeed(), m_position);
-
-	//loops para inserir os blocos de acordo com o mapa de altura da coluna
-	for (int y = 0; y < Options::chunkColumnHeigth * Options::chunkSize; y++)
-	for (int x = 0; x < Options::chunkSize; x++)
-	for (int z = 0; z < Options::chunkSize; z++)
-	{
-		//int heigthXZ = heigtMap[x * Options::chunkSize + z];
+		//loops para inserir os blocos de acordo com o mapa de altura da coluna
+		for (int y = 0; y < Options::chunkColumnHeigth * Options::chunkSize; y++)
+		for (int x = 0; x < Options::chunkSize; x++)
+		for (int z = 0; z < Options::chunkSize; z++)
+		{
+			//int heigthXZ = heigtMap[x * Options::chunkSize + z];
 			int heigthXZ = chunkDataMap[static_cast<size_t>(x) * Options::chunkSize + z].height;
 			BlockId surfaceBlock = chunkDataMap[static_cast<size_t>(x) * Options::chunkSize + z].blockId;
 
-		auto globalPos = GetGlobalPosition(x, y, z);
+			auto globalPos = GetGlobalPosition(x, y, z);
 
-		//Altura maior que o mapa de altura
-		if (y > heigthXZ)
-		{
-			if (y < Options::waterLevel)
-				SetBlock(x, y, z, BlockId::Water);
-			continue;
-		}
-		//Altura igual ao mapa de altura
-		else if (y == heigthXZ)
-		{
+			//Altura maior que o mapa de altura
+			if (y > heigthXZ)
+			{
+				if (y < Options::waterLevel)
+					SetBlock(x, y, z, BlockId::Water);
+				continue;
+			}
+			//Altura igual ao mapa de altura
+			else if (y == heigthXZ)
+			{
 				/*if (x == 0 || z == 0 || x == Options::chunkSize-1 || z == Options::chunkSize - 1)
-				SetBlock(x, y, z, BlockId::Sand);
-			else*/
-				SetBlock(x, y, z, surfaceBlock);
-				bool anotherTree = false;
-				for (int i = -2; i < 3; i++) 
-				for (int j = -1; j < 3; j++) 
-				for (int k = -2; k < 3; k++) 
-					if (GetBlock({ x + i, y + j, z + k }) == BlockId::DarkWood || GetBlock({ x + i, y + j, z + k }) == BlockId::LightWood) 
-						anotherTree = true;
-				//TODO arvores por seed
-				if (!anotherTree && y > Options::waterLevel)
-					TryToGenerateTree(x, y, z);
-		}
-		//Altura até 5 blocos a baixo do mapa de altura
-		else if (y > heigthXZ - 5)
-		{
+					SetBlock(x, y, z, BlockId::Sand);
+				else*/
+					SetBlock(x, y, z, surfaceBlock);
+					bool anotherTree = false;
+					for (int i = -2; i < 3; i++) 
+					for (int j = -1; j < 3; j++) 
+					for (int k = -2; k < 3; k++) 
+						if (GetBlock({ x + i, y + j, z + k }) == BlockId::DarkWood || GetBlock({ x + i, y + j, z + k }) == BlockId::LightWood) 
+							anotherTree = true;
+					//TODO arvores por seed
+					if (!anotherTree && y > Options::waterLevel)
+						TryToGenerateTree(x, y, z);
+			}
+			//Altura até 5 blocos a baixo do mapa de altura
+			else if (y > heigthXZ - 5)
+			{
 				/*if (x == 0 || z == 0 || x == Options::chunkSize - 1 || z == Options::chunkSize - 1)
-				SetBlock(x, y, z, BlockId::Sand);
-			else*/
-				SetBlock(x, y, z, BlockId::Dirt);
-		}
-		//Demais blocos abaixo
-		else
-			if(y == 0)
-				SetBlock(x, y, z, BlockId::Lava);
+					SetBlock(x, y, z, BlockId::Sand);
+				else*/
+					SetBlock(x, y, z, BlockId::Dirt);
+			}
+			//Demais blocos abaixo
 			else
-			SetBlock(x, y, z, BlockId::Stone);
-	}
+				SetBlock(x, y, z, BlockId::Stone);
+		}
 		if (Options::saveEnabled)
 		{
 			regionHeader |= uint64_t(1) << regionIndex;
@@ -182,8 +169,6 @@ ChunkColumn::~ChunkColumn()
 			std::cout << "Fail: " << m_region->file->fail() << "\n";
 			std::cout << "Bad: " << m_region->file->bad() << "\n";*/
 		}
-		myFile->close();
-		delete myFile;
 	}
 }
 

@@ -37,25 +37,23 @@ namespace NoiseGenerator
 	}
 	double GenerateNoiseBlock(int x, int z)
 	{
-			double amplitude = 1;
-			double frequency = 1;
-			double noiseHeigth = 0;
-			//roda na mesma posicao [x, z] n = octaves vezes para maior variedade
-			for (int i = 0; i < m_octaves; i++)
-			{
-				//a frequencia altera os pontos de amostra do ruido
+		double amplitude = 1;
+		double frequency = 1;
+		double noiseHeigth = 0;
+		//roda na mesma posicao [x, z] n = octaves vezes para maior variedade
+		for (int i = 0; i < m_octaves; i++)
+		{
+			//a frequencia altera os pontos de amostra do ruido
 			double sampleX = x / m_scale * frequency;
 			double sampleZ = z / m_scale * frequency;
 
-				double simplexXZ = m_noise.GetNoise(sampleX, sampleZ);
-				simplexXZ += 1;
-				simplexXZ /= 2;
-				//a amplitude altera o quanto essa oitava altera no valor final
-				noiseHeigth += simplexXZ * amplitude;
+			double simplexXZ = m_noise.GetNoise(sampleX, sampleZ);
+			//a amplitude altera o quanto essa oitava altera no valor final
+			noiseHeigth += simplexXZ * amplitude;
 
-				amplitude *= m_persistance;
-				frequency *= m_lacunarity;
-			}
+			amplitude *= m_persistance;
+			frequency *= m_lacunarity;
+		}
 		return noiseHeigth;
 	}
 }

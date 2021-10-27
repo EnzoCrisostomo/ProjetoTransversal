@@ -1,6 +1,5 @@
 #pragma once
 #include "Math/Vectors.h"
-#include <GLFW/glfw3.h>
 #include "World/Block/BlockDatabase.h"
 
 #include <GLFW/glfw3.h>
@@ -76,4 +75,3 @@ private:
 	void HandleMouseInput();
 	void HandleMovement(World* world, glm::dvec3 direction);
 };
-
