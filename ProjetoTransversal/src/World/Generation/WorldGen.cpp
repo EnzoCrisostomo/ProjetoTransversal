@@ -120,7 +120,7 @@ namespace WorldGen
 		//biomes.emplace_back("taigaForest",		-1,  0, -2, BlockId::LightLeaf);
 		//biomes.emplace_back("tundraHills",		 1,  1, -2, BlockId::Glass);
 		//biomes.emplace_back("tundraForestHills", 1,  0, -2, BlockId::Lava);
-
+		
 		for (auto& bioma : biomes)
 		{
 			double deltaA = pow(abs(bioma.altitude		- altitude), 8);
@@ -129,7 +129,7 @@ namespace WorldGen
 			double totalDiff = deltaA + deltaH + deltaT;
 
 			if (totalDiff < lowestDiff)
-			{
+	{
 				lowestDiff = totalDiff;
 				block = bioma.block;
 			}
