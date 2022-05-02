@@ -107,7 +107,7 @@ namespace WorldGen
 		//altitude, humidity, temperature
 		//biomes.emplace_back("ocean",			 -10,  50, temperature, BlockId::Water);
 		biomes.emplace_back("beach",			 -10,  49, temperature, BlockId::Sand);
-		biomes.emplace_back("plains",			   0,  48, temperature, BlockId::Grass);
+		biomes.emplace_back("plains",			   0,  48, temperature, BlockId::GrassBlock);
 		//biomes.emplace_back("desert",			 0, -50, temperature, BlockId::Lava);
 		biomes.emplace_back("tundra",			 0,  10, -20, BlockId::SnowGrass);
 		//biomes.emplace_back("hills",			 1,  0,  0, BlockId::Mushroom);

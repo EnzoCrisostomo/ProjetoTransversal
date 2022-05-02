@@ -8,7 +8,7 @@ typedef float GLfloat;
 enum class BlockId : uint8_t
 {
 	Air = 0,
-	Grass,
+	GrassBlock,
 	Dirt,
 	Stone,
 	Sand,
@@ -32,6 +32,11 @@ enum class BlockId : uint8_t
 	Bricks,
 	Glass,
 	BookShelf,
+	Grass,
+	Poppy,
+	Lily,
+	Dandelion,
+	BlueOrchid,
 
 	blockCount
 };
@@ -46,19 +51,22 @@ enum class Transparency
 class Block
 {
 public:
-	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent,
-		  const glm::vec2& topTextureCoords, const glm::vec2& sideTextureCoords, const glm::vec2& bottomTextureCoords);
-	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent,
-		  const unsigned int topTextureIndex, const unsigned int sideTextureIndex, const unsigned int bottomTextureIndex);
+	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation,
+		const glm::vec2& topTextureCoords, const glm::vec2& sideTextureCoords, const glm::vec2& bottomTextureCoords);
+	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation,
+		const unsigned int topTextureIndex, const unsigned int sideTextureIndex, const unsigned int bottomTextureIndex);
 
-	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const glm::vec2& textureCoords);
-	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const unsigned int textureIndex);
+	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation, 
+		const glm::vec2& textureCoords);
+	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation, 
+		const unsigned int textureIndex);
 
-	const bool operator = (const Block& other) const
+	const bool operator == (const Block& other) const
 	{
 		return this->m_blockId == other.m_blockId;
 	}
 	const bool IsSolid() const { return m_isSolid; };
+	const bool IsVegetation() const { return m_isVegetation; };
 
 	Transparency IsTranslucent() const { return m_transparency; };
 
@@ -80,6 +88,6 @@ private:
 	const char* m_name;
 	const BlockId m_blockId;
 	const bool m_isSolid;
+	const bool m_isVegetation;
 	Transparency m_transparency;
 };
-

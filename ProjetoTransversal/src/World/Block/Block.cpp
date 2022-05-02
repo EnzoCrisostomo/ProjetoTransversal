@@ -6,16 +6,16 @@ namespace
 	constexpr float TEXTURE_STEP = 1.0 / TEXTURE_COUNT;
 }
 
-Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent,
+Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation,
 			 const glm::vec2& topTextureCoords, const glm::vec2& sideTextureCoords, const glm::vec2& bottomTextureCoords)
-	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent)
+	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent), m_isVegetation(isVegetation)
 {
 	Generatetextures(topTextureCoords, sideTextureCoords, bottomTextureCoords);
 }
 
-Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent,
+Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation,
 			 const unsigned int topTextureIndex, const unsigned int sideTextureIndex, const unsigned int bottomTextureIndex)
-	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent)
+	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent), m_isVegetation(isVegetation)
 {
 	glm::vec2 topTextureCoords = IndexToTextureCoords(topTextureIndex);
 	glm::vec2 sideTextureCoords = IndexToTextureCoords(sideTextureIndex);
@@ -24,14 +24,14 @@ Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Trans
 	Generatetextures(topTextureCoords, sideTextureCoords, bottomTextureCoords);
 }
 
-Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const glm::vec2& textureCoords)
-	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent)
+Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation, const glm::vec2& textureCoords)
+	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent), m_isVegetation(isVegetation)
 {
 	Generatetextures(textureCoords, textureCoords, textureCoords);
 }
 
-Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const unsigned int textureIndex)
-	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent)
+Block::Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation, const unsigned int textureIndex)
+	: m_name(name), m_blockId(blockId), m_isSolid(isSolid), m_transparency(isTransparent), m_isVegetation(isVegetation)
 {
 	glm::vec2 textureCoords = IndexToTextureCoords(textureIndex);
 

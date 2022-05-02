@@ -15,6 +15,10 @@ public:
 					  const glm::ivec3& chunkPosition,
 					  const glm::ivec3& blockPosition);
 
+	void AddVegetationBlock(const std::vector<GLfloat>& textureCoords,
+					  const glm::ivec3& chunkPosition,
+					  const glm::ivec3& blockPosition);
+
 	void BufferMesh();
 
 	const Model& GetModel() const;

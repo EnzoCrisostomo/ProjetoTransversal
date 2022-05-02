@@ -39,6 +39,60 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 	m_indicesCount += 4;
 }
 
+void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
+{
+	const std::vector<GLfloat>& blockFace =
+	{
+		0, 0, 1,
+		1, 0, 0,
+		1, 1, 0,
+		0, 1, 1, 
+	
+		1, 0, 1,
+		0, 0, 0,
+		0, 1, 0,
+		1, 1, 1,
+		
+		1, 0, 0,
+		0, 0, 1,
+		0, 1, 1, 
+		1, 1, 0,
+	
+		0, 0, 0,
+		1, 0, 1,
+		1, 1, 1,
+		0, 1, 0,
+	};
+	//Vertex Positions
+	for (int i = 0, index = 0; i < 16; i++)
+	{
+		this->vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		index++;
+		this->vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		index++;
+		this->vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
+		index++;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		//Texture coords
+		this->textureCoordinates.insert(this->textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
+		//Indices
+		this->indices.insert(this->indices.end(),
+			{
+				m_indicesCount,
+				m_indicesCount + 1,
+				m_indicesCount + 2,
+
+				m_indicesCount + 2,
+				m_indicesCount + 3,
+				m_indicesCount
+			});
+		m_indicesCount += 4;
+	}
+}
+
 //Carrega a mesh para a placa de video
 void ChunkMesh::BufferMesh()
 {

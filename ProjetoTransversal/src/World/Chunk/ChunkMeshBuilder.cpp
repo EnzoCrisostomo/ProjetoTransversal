@@ -100,14 +100,21 @@ void ChunkMeshBuilder::TryToAddBlock(const BlockId& blockId, const glm::ivec3& b
 {
     const Block& block = BlockDatabase::Get().GetBlockInfo(blockId);
 
-    TryToAddFace(blockId, Face::top, block.GetTopTexture(), blockPosition, adjacentBlocks.up);
-    TryToAddFace(blockId, Face::bottom, block.GetBottomTexture(), blockPosition, adjacentBlocks.down);
+    if (block.IsVegetation())
+    {
+        m_chunkMesh->AddVegetationBlock(block.GetSideTexture(), m_chunk->GetLocation(), blockPosition);
+    }
+    else
+    {
+        TryToAddFace(blockId, Face::top, block.GetTopTexture(), blockPosition, adjacentBlocks.up);
+        TryToAddFace(blockId, Face::bottom, block.GetBottomTexture(), blockPosition, adjacentBlocks.down);
 
-    TryToAddFace(blockId, Face::left, block.GetSideTexture(), blockPosition, adjacentBlocks.left);
-    TryToAddFace(blockId, Face::right, block.GetSideTexture(), blockPosition, adjacentBlocks.right);
+        TryToAddFace(blockId, Face::left, block.GetSideTexture(), blockPosition, adjacentBlocks.left);
+        TryToAddFace(blockId, Face::right, block.GetSideTexture(), blockPosition, adjacentBlocks.right);
 
-    TryToAddFace(blockId, Face::front, block.GetSideTexture(), blockPosition, adjacentBlocks.front);
-    TryToAddFace(blockId, Face::back, block.GetSideTexture(), blockPosition, adjacentBlocks.back);
+        TryToAddFace(blockId, Face::front, block.GetSideTexture(), blockPosition, adjacentBlocks.front);
+        TryToAddFace(blockId, Face::back, block.GetSideTexture(), blockPosition, adjacentBlocks.back);
+    }
 }
 
 void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GLfloat>& blockFace, const std::vector<GLfloat>& textureCoords,
