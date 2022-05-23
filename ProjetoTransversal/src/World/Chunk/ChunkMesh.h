@@ -3,7 +3,7 @@
 #include "OpenGL/Model.h"
 #include <glm/glm.hpp>
 
-class ChunkMesh : public Mesh
+class ChunkMesh
 {
 public:
 	ChunkMesh() = default;
@@ -21,10 +21,16 @@ public:
 
 	void BufferMesh();
 
-	const Model& GetModel() const;
+	const Model& GetBlocksModel() const;
+	const Model& GetVegetationModel() const;
 
 private:
-	GLuint m_indicesCount = 0;
-	Model m_model;
+	Mesh m_blocksMesh;
+	Model m_blocksModel;
+	GLuint m_blocksIndicesCount = 0;
+
+	Mesh m_vegetationMesh;
+	Model m_vegetationModel;
+	GLuint m_vegetationIndicesCount = 0;
 };
 

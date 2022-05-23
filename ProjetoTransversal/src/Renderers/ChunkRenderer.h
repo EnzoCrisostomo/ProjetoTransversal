@@ -12,9 +12,14 @@ class ChunkRenderer
 public:
 	ChunkRenderer();
 	void AddToQueue(const ChunkMesh& chunk);
-	void RenderChunks(const Player player);
+	void RenderChunks(const Player& player);
 
 private:
+
+	void RenderBlocks(const Player& player);
+	void RenderVegetation(const Player& player);
+	void RenderWater(const Player& player);
+
 	std::vector<const ChunkMesh*> m_chunks;
 
 	Texture m_texture;
