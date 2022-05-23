@@ -8,6 +8,6 @@ struct Region
 
 	~Region();
 
-	std::fstream* file;
-	VectorXZ position;
+	std::fstream* m_file;
+	VectorXZ m_position;
 };
