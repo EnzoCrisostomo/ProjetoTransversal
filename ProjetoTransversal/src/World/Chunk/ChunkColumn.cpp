@@ -45,21 +45,21 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 	int regionIndex = getRegionIndex(m_position);
 	if (Options::saveEnabled)
 	{
-		if (m_region->file->is_open())
+		if (m_region->m_file->is_open())
 		{
-			m_region->file->seekg(0);
-			m_region->file->read(reinterpret_cast<char*>(&regionHeader), sizeof(uint64_t));
+			m_region->m_file->seekg(0);
+			m_region->m_file->read(reinterpret_cast<char*>(&regionHeader), sizeof(uint64_t));
 
 			hasData = regionHeader & (uint64_t(1) << regionIndex);
 
 			if (hasData)
 			{
 				std::streampos startPos = getFileStartIndex(regionIndex);
-				m_region->file->seekg(startPos);
+				m_region->m_file->seekg(startPos);
 				for (auto& chunk : m_chunks)
 				{
 					auto& data = chunk.GetData();
-					m_region->file->read(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
+					m_region->m_file->read(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
 				}
 				/*std::cout << "Estados Apos ler\n";
 				std::cout << "Good: " << m_region->file->good() << "\n";
@@ -128,8 +128,8 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 		if (Options::saveEnabled)
 		{
 			regionHeader |= uint64_t(1) << regionIndex;
-			m_region->file->seekp(0);
-			m_region->file->write(reinterpret_cast<char*>(&regionHeader), sizeof(uint64_t));
+			m_region->m_file->seekp(0);
+			m_region->m_file->write(reinterpret_cast<char*>(&regionHeader), sizeof(uint64_t));
 		}
 	}
 	//Insere os blocos de uma lista de bloco que foram setados
@@ -145,23 +145,23 @@ ChunkColumn::~ChunkColumn()
 {
 	if (Options::saveEnabled)
 	{
-		if (m_region->file->is_open())
+		if (m_region->m_file->is_open())
 		{
 			/*std::cout << "Estados Antes\n";
 			std::cout << "Good: " << m_region->file->good() << "\n";
 			std::cout << "Fail: " << m_region->file->fail() << "\n";
 			std::cout << "Bad: " << m_region->file->bad() << "\n";*/
 
-			m_region->file->clear();
+			m_region->m_file->clear();
 			/*std::cout << "==============\nRegion Pos: \n";
 			m_region->position.Print();*/
 			int regionIndex = getRegionIndex(m_position);
 			std::streampos startPos = getFileStartIndex(regionIndex);
-			m_region->file->seekp(startPos);
+			m_region->m_file->seekp(startPos);
 			for (auto& chunk : m_chunks)
 			{
 				auto& data = chunk.GetData();
-				m_region->file->write(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
+				m_region->m_file->write(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
 			}
 
 			/*std::cout << "Estados escrever\n";
