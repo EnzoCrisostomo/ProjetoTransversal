@@ -235,7 +235,7 @@ bool ChunkColumn::BuildMesh()
 		if (!chunk.HasMesh())
 		{
 			chunk.BuildMesh();
-			break;
+			//break;
 		}
 	}
 
