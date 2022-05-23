@@ -21,4 +21,4 @@ const std::string Options::dataPath = "./data/"; //Pasta de saves
 const std::string Options::savePath = Options::dataPath + "saves/"; //Pasta de saves
 	  std::string Options::worldRegionsPath = Options::dataPath + "dump/"; //Pasta de saves
 
-bool Options::teste = false;
+bool Options::teste = true;

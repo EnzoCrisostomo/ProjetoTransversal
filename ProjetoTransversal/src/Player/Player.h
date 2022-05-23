@@ -1,6 +1,7 @@
 #pragma once
 #include "Math/Vectors.h"
 #include "World/Block/BlockDatabase.h"
+#include "Options/Options.h"
 
 #include <GLFW/glfw3.h>
 
@@ -38,7 +39,7 @@ public:
 
 
 	void CreateProjectionMatrix();
-	const glm::dmat4& GetProjectionMatrix() const { return m_projectionMatrix; }
+	const glm::dmat4& GetProjectionMatrix() const { return Options::teste ? m_projectionMatrix : m_projectionMatrixZoom; }
 	const glm::dmat4& GetViewMatrix() const { return m_viewMatrix; }
 	const glm::dvec3& GetPosition() const { return m_position; }
 	const glm::dvec3& GetCameraFront() const { return m_cameraFront; }
@@ -68,6 +69,7 @@ private:
 	Dimensions m_dimensions;
 		 
 	glm::dmat4 m_projectionMatrix;
+	glm::dmat4 m_projectionMatrixZoom;
 	glm::dmat4 m_viewMatrix;
 
 	const bool Pular() const;

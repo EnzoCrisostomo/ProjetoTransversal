@@ -32,6 +32,7 @@ Player::Player(GLFWwindow* window, PlayingState* state)
 	  m_dimensions		(glm::dvec3( 0.3,  0.2,  1.6 )),
 
 	  m_projectionMatrix(glm::dmat4(1)),
+	  m_projectionMatrixZoom(glm::dmat4(1)),
 	  m_viewMatrix		(glm::dmat4(1))
 {
 	CreateProjectionMatrix();
@@ -175,6 +176,7 @@ const BlockId Player::getBlockHoldingId() const
 void Player::CreateProjectionMatrix()
 {
 	m_projectionMatrix = glm::perspective(glm::radians(Options::fov), (Options::windowWidth / Options::windowHeight), 0.1, 1000.0);
+	m_projectionMatrixZoom = glm::perspective(glm::radians(Options::fov/5), (Options::windowWidth / Options::windowHeight), 0.1, 1000.0);
 }
 
 void Player::HandleMovement(World* world, glm::dvec3 direction)
