@@ -2,7 +2,7 @@
 #include "Player/Player.h"
 
 CubeRenderer::CubeRenderer()
-    :   m_texture("src/res/AtlasTeste.png"),
+    :   m_texture("src/res/AtlasTeste.png", 4),
         m_shader("src/shaders/Basic.glsl")
 {
     m_model.SetData({

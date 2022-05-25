@@ -23,5 +23,6 @@ private:
 	std::vector<const ChunkMesh*> m_chunks;
 
 	Texture m_texture;
+	Texture m_vegetationTexture;
 	Shader m_shader;
 };

@@ -3,7 +3,8 @@
 #include "World/Chunk/ChunkMesh.h"
 
 ChunkRenderer::ChunkRenderer()
-    :   m_texture("src/res/AtlasTeste.png"),
+    :   m_texture("src/res/AtlasTeste.png", 4),
+        m_vegetationTexture("src/res/AtlasTeste.png", 0),
         m_shader("src/shaders/Basic.glsl")
 {
 }
@@ -33,13 +34,13 @@ void ChunkRenderer::RenderBlocks(const Player& player)
     m_shader.loadProjectionMatrix(player.GetProjectionMatrix());
     m_shader.loadViewMatrix(player.GetViewMatrix());
 
+    glm::mat4 model = glm::mat4(1.0f);
+    m_shader.loadModelMatrix(model);
+
     for (const ChunkMesh* chunk : m_chunks)
     {
         chunk->GetBlocksModel().BindVao();
 
-        glm::mat4 model = glm::mat4(1.0f);
-
-        m_shader.loadModelMatrix(model);
         glDrawElements(GL_TRIANGLES, chunk->GetBlocksModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }
 }
@@ -47,18 +48,12 @@ void ChunkRenderer::RenderBlocks(const Player& player)
 void ChunkRenderer::RenderVegetation(const Player& player)
 {
     glDisable(GL_CULL_FACE);
-    m_texture.BindTexture();
-    m_shader.Bind();
-    m_shader.loadProjectionMatrix(player.GetProjectionMatrix());
-    m_shader.loadViewMatrix(player.GetViewMatrix());
+    m_vegetationTexture.BindTexture();
 
     for (const ChunkMesh* chunk : m_chunks)
     {
         chunk->GetVegetationModel().BindVao();
 
-        glm::mat4 model = glm::mat4(1.0f);
-
-        m_shader.loadModelMatrix(model);
         glDrawElements(GL_TRIANGLES, chunk->GetVegetationModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }
 }
