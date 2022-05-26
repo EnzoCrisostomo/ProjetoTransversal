@@ -68,8 +68,8 @@ void Player::Update(World* world, double elapsedTime)
 	glm::dvec3 direction = HandleKeyboardInput();
 	HandleMovement(world, direction);
 
-	if(Options::teste)
-		std::cout << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
+	//if(Options::teste)
+	//	std::cout << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
 	//std::cout << std::setprecision(4) << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
 	//std::cout << "Velocity: x[" << m_velocity.x << "] y[" << m_velocity.y << "] z[" << m_velocity.z << "]\n";
 	//std::cout << "Acceleration: x[" << m_acceleration.x << "] y[" << m_acceleration.y << "] z[" << m_acceleration.z << "]\n";
