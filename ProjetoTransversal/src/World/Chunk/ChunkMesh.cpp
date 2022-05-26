@@ -39,6 +39,38 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 	m_blocksIndicesCount += 4;
 }
 
+void ChunkMesh::AddWaterBlockFace(const std::vector<GLfloat>& blockFace,
+							 const std::vector<GLfloat>& textureCoords,
+							 const glm::ivec3& chunkPosition,
+							 const glm::ivec3& blockPosition)
+{
+	//Vertex Positions
+	for (int i = 0, index = 0; i < 4; i++)
+	{
+		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		index++;
+		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		index++;
+		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
+		index++;
+	}
+	//Texture coords
+	m_waterMesh.textureCoordinates.insert(m_waterMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
+
+	//Indices
+	m_waterMesh.indices.insert(m_waterMesh.indices.end(),
+		{
+			m_waterIndicesCount,
+			m_waterIndicesCount + 1,
+			m_waterIndicesCount + 2,
+
+			m_waterIndicesCount + 2,
+			m_waterIndicesCount + 3,
+			m_waterIndicesCount
+		});
+	m_waterIndicesCount += 4;
+}
+
 void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
 {
 	const std::vector<GLfloat>& blockFace =
@@ -88,18 +120,22 @@ void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, co
 void ChunkMesh::BufferMesh()
 {
 	m_blocksModel.SetData(m_blocksMesh);
-
 	m_blocksMesh.vertexPositions.clear();
 	m_blocksMesh.textureCoordinates.clear();
 	m_blocksMesh.indices.clear();
 	m_blocksIndicesCount = 0;
 	
 	m_vegetationModel.SetData(m_vegetationMesh);
-	
 	m_vegetationMesh.vertexPositions.clear();
 	m_vegetationMesh.textureCoordinates.clear();
 	m_vegetationMesh.indices.clear();
 	m_vegetationIndicesCount = 0;
+	
+	m_waterModel.SetData(m_waterMesh);
+	m_waterMesh.vertexPositions.clear();
+	m_waterMesh.textureCoordinates.clear();
+	m_waterMesh.indices.clear();
+	m_waterIndicesCount = 0;
 }
 
 const Model& ChunkMesh::GetVegetationModel() const
@@ -109,4 +145,8 @@ const Model& ChunkMesh::GetVegetationModel() const
 const Model& ChunkMesh::GetBlocksModel() const
 {
 	return m_blocksModel;
+}
+const Model& ChunkMesh::GetWaterModel() const
+{
+	return m_waterModel;
 }

@@ -25,4 +25,5 @@ private:
 	Texture m_texture;
 	Texture m_vegetationTexture;
 	Shader m_shader;
+	Shader m_waterShader;
 };

@@ -122,7 +122,10 @@ void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GL
 {
     if (ShouldMakeFace(blockId, blockFacing))
     {
-        m_chunkMesh->AddBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
+        if(blockId == BlockId::Water)
+            m_chunkMesh->AddWaterBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
+        else
+            m_chunkMesh->AddBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
     }
 }
 

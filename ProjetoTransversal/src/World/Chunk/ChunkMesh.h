@@ -16,13 +16,19 @@ public:
 					  const glm::ivec3& blockPosition);
 
 	void AddVegetationBlock(const std::vector<GLfloat>& textureCoords,
-					  const glm::ivec3& chunkPosition,
-					  const glm::ivec3& blockPosition);
+							const glm::ivec3& chunkPosition,
+							const glm::ivec3& blockPosition);
+
+	void AddWaterBlockFace(const std::vector<GLfloat>& blockFace,
+						   const std::vector<GLfloat>& textureCoords,
+						   const glm::ivec3& chunkPosition,
+						   const glm::ivec3& blockPosition);
 
 	void BufferMesh();
 
 	const Model& GetBlocksModel() const;
 	const Model& GetVegetationModel() const;
+	const Model& GetWaterModel() const;
 
 private:
 	Mesh m_blocksMesh;
@@ -32,5 +38,9 @@ private:
 	Mesh m_vegetationMesh;
 	Model m_vegetationModel;
 	GLuint m_vegetationIndicesCount = 0;
+	
+	Mesh m_waterMesh;
+	Model m_waterModel;
+	GLuint m_waterIndicesCount = 0;
 };
 
