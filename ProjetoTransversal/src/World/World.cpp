@@ -250,7 +250,7 @@ void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 
 //adiciona todas colunas para o vetor de renderizacao onde
 //todo o mundo carregado sera renderizado
-void World::RenderWorld(MasterRenderer* masterRender)
+void World::RenderWorld(MasterRenderer* masterRender, glm::vec3 playerPos)
 {
 	//TODO Fix this lul
 	//for (int i = 0; i < 8; i++)
@@ -265,7 +265,9 @@ void World::RenderWorld(MasterRenderer* masterRender)
 			continue;
 		if (!m_chunkManager.GetChunk(column).HasFullMesh())
 			continue;
-		m_chunkManager.GetChunk(column).RenderColumn(masterRender);
+
+		int chunkPlayerY = static_cast<int>(floor(playerPos.y / Options::chunkSize));
+		m_chunkManager.GetChunk(column).RenderColumn(masterRender, chunkPlayerY);
 	}
 	masterRender->DrawCube(m_gizmo);
 }

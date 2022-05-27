@@ -120,21 +120,15 @@ void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, co
 void ChunkMesh::BufferMesh()
 {
 	m_blocksModel.SetData(m_blocksMesh);
-	m_blocksMesh.vertexPositions.clear();
-	m_blocksMesh.textureCoordinates.clear();
-	m_blocksMesh.indices.clear();
+	m_blocksMesh.Free();
 	m_blocksIndicesCount = 0;
 	
 	m_vegetationModel.SetData(m_vegetationMesh);
-	m_vegetationMesh.vertexPositions.clear();
-	m_vegetationMesh.textureCoordinates.clear();
-	m_vegetationMesh.indices.clear();
+	m_vegetationMesh.Free();
 	m_vegetationIndicesCount = 0;
 	
 	m_waterModel.SetData(m_waterMesh);
-	m_waterMesh.vertexPositions.clear();
-	m_waterMesh.textureCoordinates.clear();
-	m_waterMesh.indices.clear();
+	m_waterMesh.Free();
 	m_waterIndicesCount = 0;
 }
 

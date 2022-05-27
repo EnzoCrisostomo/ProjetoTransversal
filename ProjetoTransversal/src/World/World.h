@@ -12,7 +12,7 @@ public:
 	World(Player& player, std::string worldName);
 	~World();
 
-	void RenderWorld(MasterRenderer* masterRender);
+	void RenderWorld(MasterRenderer* masterRender, glm::vec3 playerPos);
 	void UpdateWorld(const Player& player);
 	void SetBlock(const glm::ivec3& position, BlockId blockId);
 	BlockId GetBlock(const glm::ivec3& position);
