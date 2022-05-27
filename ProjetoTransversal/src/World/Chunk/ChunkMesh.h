@@ -30,7 +30,13 @@ public:
 	const Model& GetVegetationModel() const;
 	const Model& GetWaterModel() const;
 
+	const bool HasVegetation() const { return m_hasVegetation; }
+	const bool HasWater() const { return m_hasWater; }
+
 private:
+	bool m_hasVegetation = false;
+	bool m_hasWater = false;
+
 	Mesh m_blocksMesh;
 	Model m_blocksModel;
 	GLuint m_blocksIndicesCount = 0;

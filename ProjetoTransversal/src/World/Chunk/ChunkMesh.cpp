@@ -125,10 +125,12 @@ void ChunkMesh::BufferMesh()
 	
 	m_vegetationModel.SetData(m_vegetationMesh);
 	m_vegetationMesh.Free();
+	m_hasVegetation = m_vegetationIndicesCount > 0;
 	m_vegetationIndicesCount = 0;
 	
 	m_waterModel.SetData(m_waterMesh);
 	m_waterMesh.Free();
+	m_hasWater = m_waterIndicesCount > 0;
 	m_waterIndicesCount = 0;
 }
 

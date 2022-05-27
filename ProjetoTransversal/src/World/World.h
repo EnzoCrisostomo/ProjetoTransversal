@@ -27,6 +27,7 @@ private:
 	const bool OutOfBoundsY (int y) const;
 	void BuildMesh();
 	void SpiralAroundPlayer(const VectorXZ playerChunkPos);
+	void AddPos(const VectorXZ playerPos, int x, int z);
 
 	glm::ivec3 m_gizmo;
 	VectorXZ m_oldPlayerPos;

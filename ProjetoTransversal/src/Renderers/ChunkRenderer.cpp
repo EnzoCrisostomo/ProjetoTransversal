@@ -9,7 +9,6 @@ ChunkRenderer::ChunkRenderer()
         m_waterShader("src/shaders/Water.glsl")
 {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_CULL_FACE);
 }
 
 void ChunkRenderer::AddToQueue(const ChunkMesh& chunk)
@@ -31,6 +30,7 @@ void ChunkRenderer::RenderChunks(const Player& player)
 
 void ChunkRenderer::RenderBlocks(const Player& player)
 {
+    glEnable(GL_CULL_FACE);
     m_texture.BindTexture();
     m_shader.Bind();
     m_shader.loadProjectionMatrix(player.GetProjectionMatrix());
@@ -54,16 +54,18 @@ void ChunkRenderer::RenderVegetation(const Player& player)
 
     for (const ChunkMesh* chunk : m_chunks)
     {
+        if (!chunk->HasVegetation())
+            continue;
         chunk->GetVegetationModel().BindVao();
 
         glDrawElements(GL_TRIANGLES, chunk->GetVegetationModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }
-    glEnable(GL_CULL_FACE);
 }
 
 void ChunkRenderer::RenderWater(const Player& player)
 {
     glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
 
     m_texture.BindTexture();
     m_shader.Bind();
@@ -73,12 +75,16 @@ void ChunkRenderer::RenderWater(const Player& player)
     glm::mat4 model = glm::mat4(1.0f);
     m_shader.loadModelMatrix(model);
 
-    for (const ChunkMesh* chunk : m_chunks)
+    for (auto it = m_chunks.rbegin(); it != m_chunks.rend(); ++it)
     {
+        auto chunk = *it;
+        if (!chunk->HasWater())
+            continue;
         chunk->GetWaterModel().BindVao();
 
         glDrawElements(GL_TRIANGLES, chunk->GetWaterModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }
 
     glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
 }

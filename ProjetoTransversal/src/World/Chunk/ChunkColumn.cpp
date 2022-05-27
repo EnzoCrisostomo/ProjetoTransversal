@@ -202,15 +202,16 @@ const glm::ivec3 ChunkColumn::GetGlobalPosition(int x, int y, int z) const
 //renderiza a mesh de todas as chunks da coluna
 void ChunkColumn::RenderColumn(MasterRenderer* renderer, int playerY)
 {
+	//Organizar chunks no vetor para renderizar tranparencia corretamente
 	if (playerY < 0)
 		playerY = 0;
 	if (playerY >= Options::chunkColumnHeigth)
 		playerY = Options::chunkColumnHeigth - 1;
 
-	for (int y = 0; y < playerY; y++)
+	for (int y = playerY; y >= 0; y--)
 		renderer->DrawChunk(m_chunks[y].GetMesh());
 	
-	for (int y = m_chunks.size() - 1; y >= playerY; y--)
+	for (int y = playerY + 1; y < m_chunks.size(); y++)
 		renderer->DrawChunk(m_chunks[y].GetMesh());
 }
 
