@@ -19,10 +19,11 @@ public:
 							const glm::ivec3& chunkPosition,
 							const glm::ivec3& blockPosition);
 
-	void AddWaterBlockFace(const std::vector<GLfloat>& blockFace,
+	void AddWaterBlockFace(std::vector<GLfloat> blockFace,
 						   const std::vector<GLfloat>& textureCoords,
 						   const glm::ivec3& chunkPosition,
-						   const glm::ivec3& blockPosition);
+						   const glm::ivec3& blockPosition,
+						   const bool isUpper);
 
 	void BufferMesh();
 

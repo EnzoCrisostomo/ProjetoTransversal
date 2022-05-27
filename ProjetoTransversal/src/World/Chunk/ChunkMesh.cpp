@@ -39,11 +39,16 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 	m_blocksIndicesCount += 4;
 }
 
-void ChunkMesh::AddWaterBlockFace(const std::vector<GLfloat>& blockFace,
+void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 							 const std::vector<GLfloat>& textureCoords,
 							 const glm::ivec3& chunkPosition,
-							 const glm::ivec3& blockPosition)
+							 const glm::ivec3& blockPosition,
+							 const bool isUpper)
 {
+	if(isUpper)
+		for (int i = 1; i < 11; i+=3)
+			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;
+
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
