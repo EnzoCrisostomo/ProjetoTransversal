@@ -61,10 +61,6 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 					auto& data = chunk.GetData();
 					m_region->m_file->read(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
 				}
-				/*std::cout << "Estados Apos ler\n";
-				std::cout << "Good: " << m_region->file->good() << "\n";
-				std::cout << "Fail: " << m_region->file->fail() << "\n";
-				std::cout << "Bad: " << m_region->file->bad() << "\n";*/
 			}
 		}
 		else
@@ -113,7 +109,7 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 					if (!anotherTree && y > Options::waterLevel)
 						TryToGenerateTree(x, y, z);
 			}
-			//Altura até 5 blocos a baixo do mapa de altura
+			//Altura atï¿½ 5 blocos a baixo do mapa de altura
 			else if (y > heigthXZ - 5)
 			{
 				/*if (x == 0 || z == 0 || x == Options::chunkSize - 1 || z == Options::chunkSize - 1)
@@ -133,7 +129,7 @@ ChunkColumn::ChunkColumn(World& world, VectorXZ position, std::vector<std::pair<
 		}
 	}
 	//Insere os blocos de uma lista de bloco que foram setados
-	//enquanto a chunk não estava carregada
+	//enquanto a chunk nï¿½o estava carregada
 	for (auto& block : blocksToSet)
 	{
 		SetBlock(block.first, block.second);
@@ -147,14 +143,7 @@ ChunkColumn::~ChunkColumn()
 	{
 		if (m_region->m_file->is_open())
 		{
-			/*std::cout << "Estados Antes\n";
-			std::cout << "Good: " << m_region->file->good() << "\n";
-			std::cout << "Fail: " << m_region->file->fail() << "\n";
-			std::cout << "Bad: " << m_region->file->bad() << "\n";*/
-
 			m_region->m_file->clear();
-			/*std::cout << "==============\nRegion Pos: \n";
-			m_region->position.Print();*/
 			int regionIndex = getRegionIndex(m_position);
 			std::streampos startPos = getFileStartIndex(regionIndex);
 			m_region->m_file->seekp(startPos);
@@ -163,11 +152,6 @@ ChunkColumn::~ChunkColumn()
 				auto& data = chunk.GetData();
 				m_region->m_file->write(reinterpret_cast<char*>(data.data()), sizeof(BlockId) * Options::chunkVolume);
 			}
-
-			/*std::cout << "Estados escrever\n";
-			std::cout << "Good: " << m_region->file->good() << "\n";
-			std::cout << "Fail: " << m_region->file->fail() << "\n";
-			std::cout << "Bad: " << m_region->file->bad() << "\n";*/
 		}
 	}
 }
@@ -191,7 +175,7 @@ Chunk& ChunkColumn::GetChunk(int y)
 	return m_chunks[y];
 }
 
-//Muda o bloco na posição(x, y, z) da chunkColumn
+//Muda o bloco na posiï¿½ï¿½o(x, y, z) da chunkColumn
 void ChunkColumn::SetBlock(int x, int y, int z, BlockId block)
 {
 	if (OutOfBounds(x, y, z))
@@ -200,7 +184,7 @@ void ChunkColumn::SetBlock(int x, int y, int z, BlockId block)
 	m_chunks.at(y / Options::chunkSize).SetBlock(x, y % Options::chunkSize, z, block);
 }
 
-//Muda o bloco na posição(x, y, z) da chunkColumn
+//Muda o bloco na posiï¿½ï¿½o(x, y, z) da chunkColumn
 void ChunkColumn::SetBlock(const glm::ivec3& position, BlockId block)
 {
 	SetBlock(position.x, position.y, position.z, block);
@@ -216,13 +200,22 @@ const glm::ivec3 ChunkColumn::GetGlobalPosition(int x, int y, int z) const
 }
 
 //renderiza a mesh de todas as chunks da coluna
-void ChunkColumn::RenderColumn(MasterRenderer* renderer)
+void ChunkColumn::RenderColumn(MasterRenderer* renderer, int playerY)
 {
-	for (int y = 0; y < m_chunks.size(); y++)
+	//Organizar chunks no vetor para renderizar tranparencia corretamente
+	if (playerY < 0)
+		playerY = 0;
+	if (playerY >= Options::chunkColumnHeigth)
+		playerY = Options::chunkColumnHeigth - 1;
+
+	for (int y = playerY; y >= 0; y--)
+		renderer->DrawChunk(m_chunks[y].GetMesh());
+	
+	for (int y = playerY + 1; y < m_chunks.size(); y++)
 		renderer->DrawChunk(m_chunks[y].GetMesh());
 }
 
-//constroi a mesh de uma chunk da coluna que ainda não foi construida
+//constroi a mesh de uma chunk da coluna que ainda nï¿½o foi construida
 bool ChunkColumn::BuildMesh()
 {
 	//caso tenha a mesh completa retorn sem fazer nada
@@ -235,6 +228,7 @@ bool ChunkColumn::BuildMesh()
 		if (!chunk.HasMesh())
 		{
 			chunk.BuildMesh();
+			//TODO investigar multithreading para nï¿½o precisar desse break
 			//break;
 		}
 	}
@@ -253,7 +247,7 @@ bool ChunkColumn::HasFullMesh()
 	return true;
 }
 
-//checa para ver se a posicao é valida
+//checa para ver se a posicao ï¿½ valida
 bool ChunkColumn::OutOfBounds(int x, int y, int z) const
 {
 	if (x < 0 || y < 0 || z < 0		||

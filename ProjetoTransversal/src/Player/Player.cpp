@@ -68,8 +68,8 @@ void Player::Update(World* world, double elapsedTime)
 	glm::dvec3 direction = HandleKeyboardInput();
 	HandleMovement(world, direction);
 
-	/*if(Options::teste)
-		std::cout << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";*/
+	//if(Options::teste)
+	//	std::cout << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
 	//std::cout << std::setprecision(4) << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
 	//std::cout << "Velocity: x[" << m_velocity.x << "] y[" << m_velocity.y << "] z[" << m_velocity.z << "]\n";
 	//std::cout << "Acceleration: x[" << m_acceleration.x << "] y[" << m_acceleration.y << "] z[" << m_acceleration.z << "]\n";
@@ -181,7 +181,7 @@ void Player::CreateProjectionMatrix()
 
 void Player::HandleMovement(World* world, glm::dvec3 direction)
 {
-	//TODO menos aceleração quando se movendo no ar
+	//TODO menos aceleraï¿½ï¿½o quando se movendo no ar
 	m_isGrounded = false;
 
 	if (m_gamemode == 1)
@@ -222,7 +222,7 @@ void Player::HandleMovement(World* world, glm::dvec3 direction)
 		m_position.y = 255.0;
 
 
-	//TODO ajeitar desaceleração do player dependente do FPS
+	//TODO ajeitar desaceleraï¿½ï¿½o do player dependente do FPS
 	m_velocity.x *= 0.90;
 	m_velocity.z *= 0.90;
 	if (m_gamemode != 0)
@@ -341,7 +341,7 @@ void Player::PlaceAndBreakBlocks(World* world)
 	}
 }
 
-//TODO ainda está um pouco bugado
+//TODO ainda estï¿½ um pouco bugado
 bool Player::CollidingWithBlock(const glm::ivec3 blockPos) const
 {
 	if (Floor(m_position + glm::dvec3{ -m_dimensions.sides, -m_dimensions.bottom, -m_dimensions.sides }) == blockPos)

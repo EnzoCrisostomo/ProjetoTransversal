@@ -212,45 +212,84 @@ void World::BuildMesh()
 	}
 }
 
+void World::AddPos(const VectorXZ playerPos, int x, int z)
+{
+	static const int dampLoad = floor(Options::loadDistance * 0.75);
+	static const int dampView = floor(Options::viewDistance * 0.75);
+	const VectorXZ pos = { playerPos.x + x, playerPos.z + z };
+	//Load distance
+	if (abs(x) > dampLoad || abs(z) > dampLoad)
+		return;
+
+	m_columnsPositionsInLoadDistance.push_back(pos);
+
+	//View distance
+	if (abs(z) > Options::viewDistance || abs(x) > Options::viewDistance)
+		return;
+	if (abs(x) > dampView || abs(z) > dampView)
+		return;
+	m_columnsPositionsInViewDistance.push_back(pos);
+}
+
 void World::SpiralAroundPlayer(const VectorXZ playerChunkPos)
 {
-	//Loop para determinar quais chunks estao na viewDistance e na loadDistance
-	int maxIterations = static_cast<int>(pow(Options::loadDistance * 2, 2));
-	unsigned layer = 1;
-	unsigned leg = 0;
-	int x = 0;
-	int z = 0;
+	m_columnsPositionsInViewDistance.clear();
+	m_columnsPositionsInLoadDistance.clear();
 
-	for (int i = 0; i < maxIterations; i++)
+	m_columnsPositionsInLoadDistance.push_back(playerChunkPos);
+	m_columnsPositionsInViewDistance.push_back(playerChunkPos);
+
+	int count = 0;
+	for (int i = 1; i <= Options::loadDistance; i++)
 	{
-		if (i != 0)
-			switch (leg)
-			{
-			case 0: ++x; if (x == layer)  ++leg;                break;
-			case 1: ++z; if (z == layer)  ++leg;                break;
-			case 2: --x; if (-x == layer)  ++leg;                break;
-			case 3: --z; if (-z == layer) { leg = 0; ++layer; } break;
-			}
-		int result = abs(z) + abs(x);
-		//Load distance
-		if (result > Options::loadDistance + (Options::loadDistance / 2))
-			continue;
-
-		VectorXZ pos = { playerChunkPos.x + x, playerChunkPos.z + z };
-		m_columnsPositionsInLoadDistance.push_back(pos);
-
-		//View distance
-		if (abs(z) > Options::viewDistance || abs(x) > Options::viewDistance)
-			continue;
-		if (result > Options::viewDistance + (Options::viewDistance / 2))
-			continue;
-		m_columnsPositionsInViewDistance.push_back(pos);
+		for (int j = 0; j < i; j++)
+		{
+			AddPos(playerChunkPos,  i-j,  j);
+			AddPos(playerChunkPos,  j  , -(i-j));
+			AddPos(playerChunkPos,  j-i, -j);
+			AddPos(playerChunkPos, -j  , -(j-i));
+		}
+		count++;
 	}
+
+
+	//Loop para determinar quais chunks estao na viewDistance e na loadDistance
+	//int maxIterations = static_cast<int>(pow(Options::loadDistance * 2, 2));
+	//unsigned layer = 1;
+	//unsigned leg = 0;
+	//int x = 0;
+	//int z = 0;
+
+	//for (int i = 0; i < maxIterations; i++)
+	//{
+	//	if (i != 0)
+	//		switch (leg)
+	//		{
+	//		case 0: ++x; if (x == layer)  ++leg;                break;
+	//		case 1: ++z; if (z == layer)  ++leg;                break;
+	//		case 2: --x; if (-x == layer)  ++leg;                break;
+	//		case 3: --z; if (-z == layer) { leg = 0; ++layer; } break;
+	//		}
+	//	int result = abs(z) + abs(x);
+	//	//Load distance
+	//	if (result > Options::loadDistance + (Options::loadDistance / 2))
+	//		continue;
+
+	//	VectorXZ pos = { playerChunkPos.x + x, playerChunkPos.z + z };
+	//	m_columnsPositionsInLoadDistance.push_back(pos);
+
+	//	//View distance
+	//	if (abs(z) > Options::viewDistance || abs(x) > Options::viewDistance)
+	//		continue;
+	//	if (result > Options::viewDistance + (Options::viewDistance / 2))
+	//		continue;
+	//	m_columnsPositionsInViewDistance.push_back(pos);
+	//}
 }
 
 //adiciona todas colunas para o vetor de renderizacao onde
 //todo o mundo carregado sera renderizado
-void World::RenderWorld(MasterRenderer* masterRender)
+void World::RenderWorld(MasterRenderer* masterRender, glm::vec3 playerPos)
 {
 	//TODO Fix this lul
 	//for (int i = 0; i < 8; i++)
@@ -265,7 +304,9 @@ void World::RenderWorld(MasterRenderer* masterRender)
 			continue;
 		if (!m_chunkManager.GetChunk(column).HasFullMesh())
 			continue;
-		m_chunkManager.GetChunk(column).RenderColumn(masterRender);
+
+		int chunkPlayerY = static_cast<int>(floor(playerPos.y / Options::chunkSize));
+		m_chunkManager.GetChunk(column).RenderColumn(masterRender, chunkPlayerY);
 	}
 	masterRender->DrawCube(m_gizmo);
 }
@@ -279,8 +320,6 @@ void World::UpdateWorld(const Player& player)
 	VectorXZ playerChunkPos = { chunkPlayerX, chunkPlayerZ };
 	if (m_oldPlayerPos != playerChunkPos)
 	{
-		m_columnsPositionsInViewDistance.clear();
-		m_columnsPositionsInLoadDistance.clear();
 		SpiralAroundPlayer(playerChunkPos);
 		m_chunkManager.UnloadFarChunks(playerChunkPos);
 

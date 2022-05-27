@@ -19,7 +19,7 @@ public:
 	void SetBlock(int x, int y, int z, BlockId block);
 	void SetBlock(const glm::ivec3& position, BlockId block);
 
-	void RenderColumn(MasterRenderer* renderer);
+	void RenderColumn(MasterRenderer* renderer, int playerY);
 	bool BuildMesh();
 	bool HasFullMesh();
 private:

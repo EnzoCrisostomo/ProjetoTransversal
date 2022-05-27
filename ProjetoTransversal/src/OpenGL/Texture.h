@@ -6,11 +6,11 @@
 class Texture
 {
 public:
-	Texture(const std::string& filePath);
+	Texture(const std::string& filePath, int mipLevel);
 
 	~Texture();
 
-	void loadFromFile(const std::string& filePath);
+	void loadFromFile(const std::string& filePath, int mipLevel);
 	void BindTexture() const;
 
 private:

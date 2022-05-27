@@ -3,9 +3,9 @@
 #include <stb_image.h>
 #include <iostream>
 
-Texture::Texture(const std::string& filePath)
+Texture::Texture(const std::string& filePath, int mipLevel)
 {
-	loadFromFile(filePath);
+	loadFromFile(filePath, mipLevel);
 }
 
 Texture::~Texture()
@@ -13,7 +13,7 @@ Texture::~Texture()
     glDeleteTextures(1, &m_id);
 }
 
-void Texture::loadFromFile(const std::string& filePath)
+void Texture::loadFromFile(const std::string& filePath, int mipLevel)
 {
     stbi_set_flip_vertically_on_load(true);
 
@@ -26,14 +26,15 @@ void Texture::loadFromFile(const std::string& filePath)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevel);
 
     int width, height, nrChannels;
     unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        if(mipLevel)
+            glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
     {

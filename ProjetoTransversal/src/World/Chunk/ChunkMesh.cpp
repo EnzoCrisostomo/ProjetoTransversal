@@ -15,28 +15,65 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
-		this->vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
-		this->vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
 		index++;
-		this->vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
+		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
 	}
 	//Texture coords
-	this->textureCoordinates.insert(this->textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
+	m_blocksMesh.textureCoordinates.insert(m_blocksMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
 
 	//Indices
-	this->indices.insert(this->indices.end(),
+	m_blocksMesh.indices.insert(m_blocksMesh.indices.end(),
 		{
-			m_indicesCount,
-			m_indicesCount + 1,
-			m_indicesCount + 2,
+			m_blocksIndicesCount,
+			m_blocksIndicesCount + 1,
+			m_blocksIndicesCount + 2,
 
-			m_indicesCount + 2,
-			m_indicesCount + 3,
-			m_indicesCount
+			m_blocksIndicesCount + 2,
+			m_blocksIndicesCount + 3,
+			m_blocksIndicesCount
 		});
-	m_indicesCount += 4;
+	m_blocksIndicesCount += 4;
+}
+
+void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
+							 const std::vector<GLfloat>& textureCoords,
+							 const glm::ivec3& chunkPosition,
+							 const glm::ivec3& blockPosition,
+							 const bool isUpper)
+{
+	if(isUpper)
+		for (int i = 1; i < 11; i+=3)
+			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;
+
+	//Vertex Positions
+	for (int i = 0, index = 0; i < 4; i++)
+	{
+		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		index++;
+		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		index++;
+		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
+		index++;
+	}
+	//Texture coords
+	m_waterMesh.textureCoordinates.insert(m_waterMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
+
+	//Indices
+	m_waterMesh.indices.insert(m_waterMesh.indices.end(),
+		{
+			m_waterIndicesCount,
+			m_waterIndicesCount + 1,
+			m_waterIndicesCount + 2,
+
+			m_waterIndicesCount + 2,
+			m_waterIndicesCount + 3,
+			m_waterIndicesCount
+		});
+	m_waterIndicesCount += 4;
 }
 
 void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
@@ -52,64 +89,65 @@ void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, co
 		0, 0, 0,
 		0, 1, 0,
 		1, 1, 1,
-		
-		1, 0, 0,
-		0, 0, 1,
-		0, 1, 1, 
-		1, 1, 0,
-	
-		0, 0, 0,
-		1, 0, 1,
-		1, 1, 1,
-		0, 1, 0,
 	};
 	//Vertex Positions
-	for (int i = 0, index = 0; i < 16; i++)
+	for (int i = 0, index = 0; i < 8; i++)
 	{
-		this->vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
-		this->vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
 		index++;
-		this->vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
+		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
 	}
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		//Texture coords
-		this->textureCoordinates.insert(this->textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
+		m_vegetationMesh.textureCoordinates.insert(m_vegetationMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
 		//Indices
-		this->indices.insert(this->indices.end(),
+		m_vegetationMesh.indices.insert(m_vegetationMesh.indices.end(),
 			{
-				m_indicesCount,
-				m_indicesCount + 1,
-				m_indicesCount + 2,
+				m_vegetationIndicesCount,
+				m_vegetationIndicesCount + 1,
+				m_vegetationIndicesCount + 2,
 
-				m_indicesCount + 2,
-				m_indicesCount + 3,
-				m_indicesCount
+				m_vegetationIndicesCount + 2,
+				m_vegetationIndicesCount + 3,
+				m_vegetationIndicesCount
 			});
-		m_indicesCount += 4;
+		m_vegetationIndicesCount += 4;
 	}
 }
 
 //Carrega a mesh para a placa de video
+//Cria o Model da mesh
 void ChunkMesh::BufferMesh()
 {
-	m_model.SetData((Mesh)*this);
-
-	this->vertexPositions.clear();
-	this->textureCoordinates.clear();
-	this->indices.clear();
-
-	this->vertexPositions.shrink_to_fit();
-	this->textureCoordinates.shrink_to_fit();
-	this->indices.shrink_to_fit();
-
-	m_indicesCount = 0;
+	m_blocksModel.SetData(m_blocksMesh);
+	m_blocksMesh.Free();
+	m_blocksIndicesCount = 0;
+	
+	m_vegetationModel.SetData(m_vegetationMesh);
+	m_vegetationMesh.Free();
+	m_hasVegetation = m_vegetationIndicesCount > 0;
+	m_vegetationIndicesCount = 0;
+	
+	m_waterModel.SetData(m_waterMesh);
+	m_waterMesh.Free();
+	m_hasWater = m_waterIndicesCount > 0;
+	m_waterIndicesCount = 0;
 }
 
-const Model& ChunkMesh::GetModel() const
+const Model& ChunkMesh::GetVegetationModel() const
 {
-	return m_model;
+	return m_vegetationModel;
+}
+const Model& ChunkMesh::GetBlocksModel() const
+{
+	return m_blocksModel;
+}
+const Model& ChunkMesh::GetWaterModel() const
+{
+	return m_waterModel;
 }
