@@ -51,7 +51,6 @@ namespace Face
         1, 0, 1,
         0, 0, 1
     };
-
 }
 
 struct AdjacentBlocks
@@ -120,15 +119,21 @@ void ChunkMeshBuilder::TryToAddBlock(const BlockId& blockId, const glm::ivec3& b
 void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GLfloat>& blockFace, const std::vector<GLfloat>& textureCoords,
                                     const glm::ivec3& blockPosition, const glm::ivec3& blockFacing)
 {
-    if (ShouldMakeFace(blockId, blockFacing))
+    const BlockId& blockFacingId = m_chunk->GetBlock(blockFacing);
+    if (ShouldMakeFace(blockId, blockFacingId))
     {
-        m_chunkMesh->AddBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
+        if(blockId != BlockId::Water)
+            m_chunkMesh->AddBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
+        else
+        {
+            bool isUpperWaterBlock = m_chunk->GetBlock(blockPosition.x, blockPosition.y + 1, blockPosition.z) != BlockId::Water;
+            m_chunkMesh->AddWaterBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition, isUpperWaterBlock);
+        }
     }
 }
 
-bool ChunkMeshBuilder::ShouldMakeFace(const BlockId& blockId, const glm::ivec3& blockFacing)
+bool ChunkMeshBuilder::ShouldMakeFace(const BlockId& blockId, const BlockId& blockFacingId)
 {
-    const BlockId& blockFacingId = m_chunk->GetBlock(blockFacing.x, blockFacing.y, blockFacing.z);
     const Block& block = BlockDatabase::Get().GetBlockInfo(blockFacingId);
     
     if (block.IsTranslucent() != Transparency::Opaque)

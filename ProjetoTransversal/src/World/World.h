@@ -12,7 +12,7 @@ public:
 	World(Player& player, std::string worldName);
 	~World();
 
-	void RenderWorld(MasterRenderer* masterRender);
+	void RenderWorld(MasterRenderer* masterRender, glm::vec3 playerPos);
 	void UpdateWorld(const Player& player);
 	void SetBlock(const glm::ivec3& position, BlockId blockId);
 	BlockId GetBlock(const glm::ivec3& position);
@@ -27,6 +27,7 @@ private:
 	const bool OutOfBoundsY (int y) const;
 	void BuildMesh();
 	void SpiralAroundPlayer(const VectorXZ playerChunkPos);
+	void AddPos(const VectorXZ playerPos, int x, int z);
 
 	glm::ivec3 m_gizmo;
 	VectorXZ m_oldPlayerPos;

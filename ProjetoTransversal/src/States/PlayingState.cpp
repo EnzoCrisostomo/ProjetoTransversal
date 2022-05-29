@@ -27,7 +27,7 @@ void PlayingState::UpdateMatrix()
 
 void PlayingState::Render(MasterRenderer* renderer)
 {
-    m_world->RenderWorld(renderer);
+    m_world->RenderWorld(renderer, m_player.GetPosition());
     renderer->finishRender(m_player);
 }
 
