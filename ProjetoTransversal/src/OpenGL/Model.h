@@ -20,6 +20,7 @@ public:
 private:
 	VertexBuffer m_vertexPositions;
 	VertexBuffer m_vertexTextureCoordinates;
+	VertexBuffer m_vertexLightValue;
 	IndexBuffer m_indexBuffer;
 	VertexArray m_vertexArray;
 

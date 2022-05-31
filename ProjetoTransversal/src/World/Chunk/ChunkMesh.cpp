@@ -2,6 +2,57 @@
 #include "Options/Options.h"
 #include <iostream>
 
+namespace Face
+{
+	const std::vector<GLfloat> front
+	{
+		0, 0, 1,
+		1, 0, 1,
+		1, 1, 1,
+		0, 1, 1,
+	};
+
+	const std::vector<GLfloat> back
+	{
+		1, 0, 0,
+		0, 0, 0,
+		0, 1, 0,
+		1, 1, 0,
+	};
+
+	const std::vector<GLfloat> left
+	{
+		0, 0, 0,
+		0, 0, 1,
+		0, 1, 1,
+		0, 1, 0,
+	};
+
+	const std::vector<GLfloat> right
+	{
+		1, 0, 1,
+		1, 0, 0,
+		1, 1, 0,
+		1, 1, 1,
+	};
+
+	const std::vector<GLfloat> top
+	{
+		0, 1, 1,
+		1, 1, 1,
+		1, 1, 0,
+		0, 1, 0,
+	};
+
+	const std::vector<GLfloat> bottom
+	{
+		0, 0, 0,
+		1, 0, 0,
+		1, 0, 1,
+		0, 0, 1
+	};
+}
+
 ChunkMesh::~ChunkMesh()
 {
 }
@@ -37,6 +88,13 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 			m_blocksIndicesCount
 		});
 	m_blocksIndicesCount += 4;
+
+	float value = 0.8;
+	if (blockFace == Face::top)
+		value = 1;
+	else if (blockFace == Face::bottom)
+		value = 0.5;
+	m_blocksMesh.lightValues.push_back(value);
 }
 
 void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
@@ -61,7 +119,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 	}
 	//Texture coords
 	m_waterMesh.textureCoordinates.insert(m_waterMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
-
+	
 	//Indices
 	m_waterMesh.indices.insert(m_waterMesh.indices.end(),
 		{

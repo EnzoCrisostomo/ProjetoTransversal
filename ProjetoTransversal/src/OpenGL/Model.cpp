@@ -23,8 +23,8 @@ void Model::SetData(const Mesh& mesh)
 	m_vertexPositions.SetData(mesh.vertexPositions.data(),
 		static_cast<unsigned int>(mesh.vertexPositions.size()));
 
+	//VertexPos
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-
 	glEnableVertexAttribArray(0);
 	//layout.Push<float>(3);
 	//layout.setLayout();
@@ -32,11 +32,16 @@ void Model::SetData(const Mesh& mesh)
 	m_vertexTextureCoordinates.SetData(mesh.textureCoordinates.data(),
 		static_cast<unsigned int>(mesh.textureCoordinates.size()));
 
+	//Vertex Texture Coords
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-
 	glEnableVertexAttribArray(1);
 	//layout.Push<float>(3);
 	//layout.setLayout();
+
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+	glEnableVertexAttribArray(2);
+	m_vertexLightValue.SetData(mesh.lightValues.data(),
+		static_cast<unsigned int>(mesh.lightValues.size()));
 
 	m_indexBuffer.SetData(mesh.indices.data(),
 		static_cast<unsigned int>(mesh.indices.size()));
