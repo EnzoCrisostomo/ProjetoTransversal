@@ -13,5 +13,5 @@ public:
 	void DeleteData();
 
 private:
-	unsigned int m_Id = 0;
+	unsigned int m_id = 0;
 };

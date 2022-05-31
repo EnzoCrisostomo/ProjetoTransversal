@@ -8,15 +8,15 @@
 //	m_quadRenderer.AddToQueue(position);
 //}
 
-void MasterRenderer::DrawCube(const glm::vec3& position)
-{
-	m_cubeRenderer.AddToQueue(position);
-}
+//void MasterRenderer::DrawCube(const glm::vec3& position)
+//{
+//	m_cubeRenderer.AddToQueue(position);
+//}
 
-void MasterRenderer::DrawWireframeCube(const glm::vec3& position)
-{
-	m_wireframeRenderer.AddToQueue(position);
-}
+//void MasterRenderer::DrawWireframeCube(const glm::vec3& position)
+//{
+//	m_wireframeRenderer.AddToQueue(position);
+//}
 
 void MasterRenderer::DrawChunk(const ChunkMesh& mesh)
 {
@@ -30,8 +30,8 @@ void MasterRenderer::finishRender(const Player& player)
 	//m_quadRenderer.RenderQuads(player);
 	m_chunkRenderer.RenderChunks(player);
 	m_guiRenderer.RenderGui();
-	m_cubeRenderer.RenderCubes(player);
-	m_wireframeRenderer.RenderWireframe(player);
+	//m_cubeRenderer.RenderCubes(player);
+	//m_wireframeRenderer.RenderWireframe(player);
 	//glCheckError();
 }
 

@@ -2,6 +2,57 @@
 #include "Options/Options.h"
 #include <iostream>
 
+namespace Face
+{
+	const std::vector<GLfloat> front
+	{
+		0, 0, 1,
+		1, 0, 1,
+		1, 1, 1,
+		0, 1, 1,
+	};
+
+	const std::vector<GLfloat> back
+	{
+		1, 0, 0,
+		0, 0, 0,
+		0, 1, 0,
+		1, 1, 0,
+	};
+
+	const std::vector<GLfloat> left
+	{
+		0, 0, 0,
+		0, 0, 1,
+		0, 1, 1,
+		0, 1, 0,
+	};
+
+	const std::vector<GLfloat> right
+	{
+		1, 0, 1,
+		1, 0, 0,
+		1, 1, 0,
+		1, 1, 1,
+	};
+
+	const std::vector<GLfloat> top
+	{
+		0, 1, 1,
+		1, 1, 1,
+		1, 1, 0,
+		0, 1, 0,
+	};
+
+	const std::vector<GLfloat> bottom
+	{
+		0, 0, 0,
+		1, 0, 0,
+		1, 0, 1,
+		0, 0, 1
+	};
+}
+
 ChunkMesh::~ChunkMesh()
 {
 }
@@ -21,6 +72,15 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 		index++;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
+
+		float value = 1;
+		if (blockFace == Face::left || blockFace == Face::right)
+			value = 0.85;
+		else if (blockFace == Face::front || blockFace == Face::back)
+			value = 0.80;
+		else if (blockFace == Face::bottom)
+			value = 0.7;
+		m_blocksMesh.lightValues.push_back(value);
 	}
 	//Texture coords
 	m_blocksMesh.textureCoordinates.insert(m_blocksMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
@@ -58,10 +118,11 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 		index++;
 		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
+		m_waterMesh.lightValues.push_back(1.0f);
 	}
 	//Texture coords
 	m_waterMesh.textureCoordinates.insert(m_waterMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
-
+	
 	//Indices
 	m_waterMesh.indices.insert(m_waterMesh.indices.end(),
 		{
@@ -99,6 +160,7 @@ void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, co
 		index++;
 		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
+		m_vegetationMesh.lightValues.push_back(1.0f);
 	}
 
 	for (int i = 0; i < 2; i++)
