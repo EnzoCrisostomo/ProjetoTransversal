@@ -72,6 +72,15 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 		index++;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
+
+		float value = 1;
+		if (blockFace == Face::left || blockFace == Face::right)
+			value = 0.85;
+		else if (blockFace == Face::front || blockFace == Face::back)
+			value = 0.80;
+		else if (blockFace == Face::bottom)
+			value = 0.7;
+		m_blocksMesh.lightValues.push_back(value);
 	}
 	//Texture coords
 	m_blocksMesh.textureCoordinates.insert(m_blocksMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
@@ -88,13 +97,6 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 			m_blocksIndicesCount
 		});
 	m_blocksIndicesCount += 4;
-
-	float value = 0.8;
-	if (blockFace == Face::top)
-		value = 1;
-	else if (blockFace == Face::bottom)
-		value = 0.5;
-	m_blocksMesh.lightValues.push_back(value);
 }
 
 void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
@@ -116,6 +118,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 		index++;
 		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
+		m_waterMesh.lightValues.push_back(1.0f);
 	}
 	//Texture coords
 	m_waterMesh.textureCoordinates.insert(m_waterMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
@@ -157,6 +160,7 @@ void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, co
 		index++;
 		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
+		m_vegetationMesh.lightValues.push_back(1.0f);
 	}
 
 	for (int i = 0; i < 2; i++)

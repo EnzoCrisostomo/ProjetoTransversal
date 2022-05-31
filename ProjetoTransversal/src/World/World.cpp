@@ -308,7 +308,7 @@ void World::RenderWorld(MasterRenderer* masterRender, glm::vec3 playerPos)
 		int chunkPlayerY = static_cast<int>(floor(playerPos.y / Options::chunkSize));
 		m_chunkManager.GetChunk(column).RenderColumn(masterRender, chunkPlayerY);
 	}
-	masterRender->DrawCube(m_gizmo);
+	//masterRender->DrawCube(m_gizmo);
 }
 
 //atualiza o estado do mundo, removendo colunas antigas fora do limite e

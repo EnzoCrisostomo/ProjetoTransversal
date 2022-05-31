@@ -33,6 +33,6 @@ void main()
     vec4 texColor = texture(textureData, TexCoordinates);
     if(texColor.a < 0.2)
         discard;
-    //texColor = vec4(texColor.r * LightValue, texColor.g * LightValue, texColor.b * LightValue, texColor.a);
+    texColor = vec4(vec3(texColor) * LightValue, texColor.a);
     FragColor = texColor;
 }
