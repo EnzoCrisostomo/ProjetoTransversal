@@ -9,7 +9,7 @@ const char*  Options::windowName = "Minecraft!!!"; //Label da janela
 const double Options::fov = 75.0; //Fov do jogador
 const double Options::mouseSensibility = 0.2;
 const double Options::playerSpeed = 0.5;
-const int    Options::playerGamemode = 0; //0 = survival //1 = creative //2= spectator
+const int    Options::playerGamemode = 2; //0 = survival //1 = creative //2= spectator
 
 //World
 const int	 Options::viewDistance = 16; //Distância em relação ao player que chunks serão renderizadas

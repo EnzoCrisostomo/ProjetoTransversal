@@ -3,7 +3,7 @@
 
 WireframeRenderer::WireframeRenderer()
     :   m_texture("src/res/AtlasTeste.png", 4),
-        m_shader("src/shaders/Basic.glsl")
+        m_shader("src/shaders/Basic")
 {
     m_model.SetData({
     {

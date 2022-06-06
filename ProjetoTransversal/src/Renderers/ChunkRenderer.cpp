@@ -5,10 +5,11 @@
 ChunkRenderer::ChunkRenderer()
     :   m_texture("src/res/AtlasTeste.png", 4),
         m_vegetationTexture("src/res/AtlasTeste.png", 0),
-        m_shader("src/shaders/Basic.glsl"),
+        m_shader("src/shaders/Basic"),
         m_waterShader("src/shaders/Water.glsl")
 {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    u_camPos = m_shader.GetUniform("camPos");
 }
 
 void ChunkRenderer::AddToQueue(const ChunkMesh& chunk)
@@ -35,6 +36,7 @@ void ChunkRenderer::RenderBlocks(const Player& player)
     m_shader.Bind();
     m_shader.loadProjectionMatrix(player.GetProjectionMatrix());
     m_shader.loadViewMatrix(player.GetViewMatrix());
+    m_shader.LoadVec3(u_camPos, player.GetPosition());
 
     glm::mat4 model = glm::mat4(1.0f);
     m_shader.loadModelMatrix(model);

@@ -164,7 +164,6 @@
     <ClCompile Include="src\Math\Vectors.cpp" />
     <ClCompile Include="src\Math\VectorXZ.cpp" />
     <ClCompile Include="src\OpenGL\ErrorFinder.cpp" />
-    <ClCompile Include="src\OpenGL\GuiShader.cpp" />
     <ClCompile Include="src\OpenGL\IndexBuffer.cpp" />
     <ClCompile Include="src\OpenGL\Model.cpp" />
     <ClCompile Include="src\OpenGL\Shader.cpp" />
@@ -199,7 +198,6 @@
     <ClInclude Include="src\Math\Vectors.h" />
     <ClInclude Include="src\Math\VectorXZ.h" />
     <ClInclude Include="src\OpenGL\ErrorFinder.h" />
-    <ClInclude Include="src\OpenGL\GuiShader.h" />
     <ClInclude Include="src\OpenGL\IndexBuffer.h" />
     <ClInclude Include="src\OpenGL\Mesh.h" />
     <ClInclude Include="src\OpenGL\Model.h" />
@@ -235,8 +233,11 @@
     <Image Include="src\res\AtlasTeste.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\Basic.glsl" />
+    <None Include="src\shaders\Basic.frag" />
+    <None Include="src\shaders\Basic.vert" />
     <None Include="src\shaders\Crosshair.glsl" />
+    <None Include="src\shaders\Gui.frag" />
+    <None Include="src\shaders\Gui.vert" />
     <None Include="src\shaders\Water.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

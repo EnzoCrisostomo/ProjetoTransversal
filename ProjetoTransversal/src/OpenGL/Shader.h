@@ -5,26 +5,28 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <sstream>
 
+enum class ShaderType;
+
 class Shader
 {
 public:
-	Shader() = default;
-	Shader(const char* shaderFilePath);
+	Shader(const std::string shaderFilePath);
 	~Shader();
 
-	void LoadFromFile(const char* shaderFilePath);
+	void LoadFromFile(const std::string shaderFilePath);
+	const GLuint GetUniform(const char* name) const;
 
 	void Bind() const;
 	void Unbind() const;
 
 	void LoadInt(GLuint location, const int value) const;
-	void LoadInt(GLuint location, const glm::ivec2& values) const;
-	void LoadInt(GLuint location, const glm::ivec3& values) const;
-	void LoadInt(GLuint location, const glm::ivec4& values) const;
+	void LoadiVec2(GLuint location, const glm::ivec2& values) const;
+	void LoadiVec3(GLuint location, const glm::ivec3& values) const;
+	void LoadiVec4(GLuint location, const glm::ivec4& values) const;
 	void LoadFloat(GLuint location, const float value) const;
-	void LoadFloat(GLuint location, const glm::vec2& values) const;
-	void LoadFloat(GLuint location, const glm::vec3& values) const;
-	void LoadFloat(GLuint location, const glm::vec4& values) const;
+	void LoadVec2(GLuint location, const glm::vec2& values) const;
+	void LoadVec3(GLuint location, const glm::vec3& values) const;
+	void LoadVec4(GLuint location, const glm::vec4& values) const;
 
 	void LoadMatrix4(GLuint location, const glm::mat4 matrix) const;
 
@@ -38,6 +40,7 @@ private:
 	GLuint m_modelMatrixLocation = 0;
 
 	void GetUniforms();
-	void CompileShaders(const char* shaderFilePath, std::stringstream sourceArray[]) const;
+	void CompileShaders(const std::string shaderFilePath, std::stringstream sourceArray[]) const;
+	void CompileShader(const std::string shaderFilePath, ShaderType type) const;
 };
 

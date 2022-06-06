@@ -4,15 +4,72 @@
 #include <exception>
 #include <iostream>
 
+
 enum class ShaderType
 {
     NONE = -1, 
-    VERTEX, FRAGMENT, 
-    
+
+    VERTEX,
+    FRAGMENT,
+
     TYPECOUNT
 };
 
-Shader::Shader(const char* shaderFilePath)
+namespace
+{
+    std::string GetFileExtension(const ShaderType& type)
+    {
+        switch (type)
+        {
+        case ShaderType::VERTEX:
+            return ".vert";
+            break;
+        case ShaderType::FRAGMENT:
+            return ".frag";
+            break;
+        default:
+            throw std::runtime_error("Invalid Shader Type.");
+            return "ERROR";
+            break;
+        }
+    }
+    
+    std::string GetShaderName(const ShaderType& type)
+    {
+        switch (type)
+        {
+        case ShaderType::VERTEX:
+            return "VERTEX";
+            break;
+        case ShaderType::FRAGMENT:
+            return "FRAGMENT";
+            break;
+        default:
+            throw std::runtime_error("Invalid Shader Type.");
+            return "ERROR";
+            break;
+        }
+    }
+
+    int CreateShaderType(const ShaderType& type)
+    {
+        switch (type)
+        {
+        case ShaderType::VERTEX:
+            return glCreateShader(GL_VERTEX_SHADER);;
+            break;
+        case ShaderType::FRAGMENT:
+            return glCreateShader(GL_FRAGMENT_SHADER);;
+            break;
+        default:
+            throw std::runtime_error("Invalid Shader Type.");
+            return -1;
+            break;
+        }
+    }
+}
+
+Shader::Shader(const std::string shaderFilePath)
 {
     LoadFromFile(shaderFilePath);
 }
@@ -22,45 +79,19 @@ Shader::~Shader()
     glDeleteProgram(m_programId);
 }
 
-void Shader::LoadFromFile(const char* shaderFilePath)
+void Shader::LoadFromFile(const std::string shaderFilePath)
 {
-    ShaderType type = ShaderType::NONE;
-    std::stringstream sourceArray[(int)ShaderType::TYPECOUNT];
-
-    std::ifstream file(shaderFilePath);
-    if (file.is_open())
-    {
-        std::string line;
-        while (std::getline(file, line))
-        {
-            if (line.find("#shader") != std::string::npos)
-            {
-                if (line.find("vertex") != std::string::npos)
-                {
-                    type = ShaderType::VERTEX;
-                }
-                if (line.find("fragment") != std::string::npos)
-                {
-                    type = ShaderType::FRAGMENT;
-                }
-            }
-            else
-            {
-                sourceArray[(int)type] << line << '\n';
-            }
-        }
-    }
-    else
-    {
-        std::cerr << "Cannot open shader file!\n";
-        throw std::runtime_error("Failed to load shader!");
-        return;
-    }
     m_programId = glCreateProgram();
-    CompileShaders(shaderFilePath, sourceArray);
+    CompileShader(shaderFilePath, ShaderType::VERTEX);
+    CompileShader(shaderFilePath, ShaderType::FRAGMENT);
     glLinkProgram(m_programId);
 
     GetUniforms();
+}
+
+const GLuint Shader::GetUniform(const char* name) const
+{
+    return glGetUniformLocation(m_programId, name);;
 }
 
 void Shader::GetUniforms()
@@ -70,50 +101,40 @@ void Shader::GetUniforms()
     m_modelMatrixLocation = glGetUniformLocation(m_programId, "modelMatrix");
 }
 
-void Shader::CompileShaders(const char* shaderFilePath, std::stringstream sourceArray[]) const
+void Shader::CompileShader(std::string shaderFilePath, ShaderType type) const
 {
-    for (int i = 0; i < (int)ShaderType::TYPECOUNT; i++)
+    std::stringstream sourceCode;
+    shaderFilePath += GetFileExtension(type);
+
+    std::cout << shaderFilePath << "\n";
+
+    std::ifstream file(shaderFilePath);
+    if (file.is_open())
     {
-        std::string x = sourceArray[i].str();
-        const char* actual = x.c_str();
-        if (i == (int)ShaderType::VERTEX)
+        std::string line;
+        while (std::getline(file, line))
         {
-            int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, 1, &actual, nullptr);
-            glCompileShader(vertexShader);
-            glAttachShader(m_programId, vertexShader);
-
-            int success;
-            char infoLog[512];
-            glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-            if (!success)
-            {
-                glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-                std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED IN (" << shaderFilePath << ")\n" << infoLog << std::endl;
-            };
-
-            glDeleteShader(vertexShader);
+            sourceCode << line << '\n';
         }
-        else if (i == (int)ShaderType::FRAGMENT)
-        {
-            int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, 1, &actual, nullptr);
-            glCompileShader(fragmentShader);
-            glAttachShader(m_programId, fragmentShader);
-
-            int success;
-            char infoLog[512];
-            glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-            if (!success)
-            {
-                glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-                std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED IN (" << shaderFilePath << ")\n" << infoLog << std::endl;
-            };
-
-            glDeleteShader(fragmentShader);
-        }
-
     }
+    std::string aa = sourceCode.str();
+    const char* str = aa.c_str();
+    int shaderId = CreateShaderType(type);
+
+    glShaderSource(shaderId, 1, &str, nullptr);
+    glCompileShader(shaderId);
+    glAttachShader(m_programId, shaderId);
+
+    int success;
+    char infoLog[512];
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::" << GetShaderName(type) << "::COMPILATION_FAILED IN (" << shaderFilePath << ")\n" << infoLog << std::endl;
+    };
+
+    glDeleteShader(shaderId);
 }
 
 void Shader::Bind() const
@@ -131,17 +152,17 @@ void Shader::LoadInt(GLuint location, const int value) const
     glUniform1i(location, value);
 }
              
-void Shader::LoadInt(GLuint location, const glm::ivec2& values) const
+void Shader::LoadiVec2(GLuint location, const glm::ivec2& values) const
 {
     glUniform2i(location, values.x, values.y);
 }
            
-void Shader::LoadInt(GLuint location, const glm::ivec3& values) const
+void Shader::LoadiVec3(GLuint location, const glm::ivec3& values) const
 {
     glUniform3i(location, values.x, values.y, values.z);
 }
             
-void Shader::LoadInt(GLuint location, const glm::ivec4& values) const
+void Shader::LoadiVec4(GLuint location, const glm::ivec4& values) const
 {
     glUniform4i(location, values.x, values.y, values.z, values.w);
 }
@@ -151,17 +172,17 @@ void Shader::LoadFloat(GLuint location, const float value) const
     glUniform1f(location, value);
 }
            
-void Shader::LoadFloat(GLuint location, const glm::vec2& values) const
+void Shader::LoadVec2(GLuint location, const glm::vec2& values) const
 {
     glUniform2f(location, values.x, values.y);
 }
            
-void Shader::LoadFloat(GLuint location, const glm::vec3& values) const
+void Shader::LoadVec3(GLuint location, const glm::vec3& values) const
 {
     glUniform3f(location, values.x, values.y, values.z);
 }
            
-void Shader::LoadFloat(GLuint location, const glm::vec4& values) const
+void Shader::LoadVec4(GLuint location, const glm::vec4& values) const
 {
     glUniform4f(location, values.x, values.y, values.z, values.w);
 }
@@ -185,4 +206,3 @@ void Shader::loadModelMatrix(const glm::mat4 matrix)
 {
     LoadMatrix4(m_modelMatrixLocation, matrix);
 }
-

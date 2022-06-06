@@ -34,8 +34,3 @@ void MasterRenderer::finishRender(const Player& player)
 	//m_wireframeRenderer.RenderWireframe(player);
 	//glCheckError();
 }
-
-void MasterRenderer::UpdateOrthoProjMatrix()
-{
-    m_guiRenderer.CreateProjectionMatrix();
-}
