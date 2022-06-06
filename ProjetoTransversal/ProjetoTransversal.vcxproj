@@ -231,6 +231,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\res\AtlasTeste.png" />
+    <Image Include="src\res\crosshair.png" />
+    <Image Include="src\res\ItemBar.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\Basic.frag" />

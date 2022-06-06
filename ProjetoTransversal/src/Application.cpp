@@ -274,6 +274,7 @@ void Application::runLoop()
             if (shouldUpdateProjMat)
             {
                 shouldUpdateProjMat = false;
+                m_masterRenderer->UpdateOrthoProjMatrix();
                 m_playingState->UpdateMatrix();
             }
             m_playingState->Update(m_elapsedTime);

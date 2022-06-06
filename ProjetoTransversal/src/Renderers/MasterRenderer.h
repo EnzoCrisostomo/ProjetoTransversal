@@ -19,6 +19,7 @@ public:
 	//void DrawWireframeCube(const glm::vec3& position);
 	void DrawChunk(const ChunkMesh& mesh);
 	void finishRender(const Player& player);
+	void UpdateOrthoProjMatrix();
 private:
 	//QuadRenderer m_quadRenderer;
 	//CubeRenderer m_cubeRenderer;

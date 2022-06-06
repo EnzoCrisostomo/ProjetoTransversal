@@ -15,9 +15,25 @@ PlayingState::~PlayingState()
 
 void PlayingState::Update(double elapsedTime)
 {
+    const double tickTime = 2.0;
+    static double timeCount = 0.0;
+    timeCount += elapsedTime;
     m_player.Update(m_world, elapsedTime);
 
     m_world->UpdateWorld(m_player);
+    if (timeCount > tickTime)
+    {
+        timeCount -= tickTime;
+        /*static BlockId block = BlockId::Grass;
+        glm::ivec3 blockPos = m_player.GetPosition();
+        blockPos.x += 3;
+        blockPos.z += 3;
+        m_world->SetBlock(blockPos, block);
+        int value = (int)block+1;
+        if (value >= (int)BlockId::blockCount)
+            value = 0;
+        block = (BlockId)value;*/
+    }
 }
 
 void PlayingState::UpdateMatrix()
