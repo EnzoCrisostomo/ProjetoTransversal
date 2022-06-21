@@ -32,6 +32,7 @@ void ChunkRenderer::RenderChunks(const Player& player)
 void ChunkRenderer::RenderBlocks(const Player& player)
 {
     glEnable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
     m_texture.BindTexture();
     m_shader.Bind();
     m_shader.loadProjectionMatrix(player.GetProjectionMatrix());
@@ -52,6 +53,7 @@ void ChunkRenderer::RenderBlocks(const Player& player)
 void ChunkRenderer::RenderVegetation(const Player& player)
 {
     glDisable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
     m_vegetationTexture.BindTexture();
 
     for (const ChunkMesh* chunk : m_chunks)
