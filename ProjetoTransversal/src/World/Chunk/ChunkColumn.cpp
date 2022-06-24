@@ -209,10 +209,10 @@ void ChunkColumn::RenderColumn(MasterRenderer* renderer, int playerY)
 		playerY = Options::chunkColumnHeigth - 1;
 
 	for (int y = playerY; y >= 0; y--)
-		renderer->DrawChunk(m_chunks[y].GetMesh());
+		renderer->DrawChunk(&m_chunks[y]);
 	
 	for (int y = playerY + 1; y < m_chunks.size(); y++)
-		renderer->DrawChunk(m_chunks[y].GetMesh());
+		renderer->DrawChunk(&m_chunks[y]);
 }
 
 //constroi a mesh de uma chunk da coluna que ainda n�o foi construida

@@ -5,13 +5,13 @@
 #include "OpenGL/Texture.h"
 #include "OpenGL/Shader.h"
 class Player;
-class ChunkMesh;
+class Chunk;
 
 class ChunkRenderer
 {
 public:
 	ChunkRenderer();
-	void AddToQueue(const ChunkMesh& chunk);
+	void AddToQueue(Chunk* chunk);
 	void RenderChunks(const Player& player);
 
 private:
@@ -20,7 +20,8 @@ private:
 	void RenderWater(const Player& player);
 
 	GLuint u_camPos;
-	std::vector<const ChunkMesh*> m_chunks;
+	GLuint u_chunkPos;
+	std::vector<Chunk*> m_chunks;
 
 	Texture m_texture;
 	Texture m_vegetationTexture;

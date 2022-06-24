@@ -18,9 +18,9 @@
 //	m_wireframeRenderer.AddToQueue(position);
 //}
 
-void MasterRenderer::DrawChunk(const ChunkMesh& mesh)
+void MasterRenderer::DrawChunk(Chunk* chunk)
 {
-	m_chunkRenderer.AddToQueue(mesh);
+	m_chunkRenderer.AddToQueue(chunk);
 }
 
 void MasterRenderer::finishRender(const Player& player)
@@ -29,7 +29,7 @@ void MasterRenderer::finishRender(const Player& player)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//m_quadRenderer.RenderQuads(player);
 	m_chunkRenderer.RenderChunks(player);
-	m_guiRenderer.RenderGui();
+	//m_guiRenderer.RenderGui();
 	//m_cubeRenderer.RenderCubes(player);
 	//m_wireframeRenderer.RenderWireframe(player);
 	//glCheckError();

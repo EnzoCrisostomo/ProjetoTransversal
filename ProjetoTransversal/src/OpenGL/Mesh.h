@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Vertex.h"
 
 struct Mesh
 {
@@ -7,6 +8,7 @@ struct Mesh
 	std::vector<GLfloat> textureCoordinates;
 	std::vector<GLfloat> lightValues;
 	std::vector<GLuint>  indices;
+	std::vector<Vertex>  vertices;
 
 	void Free() 
 	{
@@ -14,10 +16,12 @@ struct Mesh
 		textureCoordinates.clear();
 		lightValues.clear();
 		indices.clear();
+		vertices.clear();
 
 		vertexPositions.shrink_to_fit();
 		textureCoordinates.shrink_to_fit();
 		lightValues.shrink_to_fit();
 		indices.shrink_to_fit();
+		vertices.shrink_to_fit();
 	}
 };

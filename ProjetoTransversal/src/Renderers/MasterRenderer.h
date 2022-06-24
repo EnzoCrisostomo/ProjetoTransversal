@@ -6,7 +6,7 @@
 #include "GuiRenderer.h"
 #include "WireframeRenderer.h"
 
-class ChunkMesh;
+class Chunk;
 class Player;
 
 class MasterRenderer
@@ -17,7 +17,7 @@ public:
 	//void DrawQuad(const glm::vec3& position);
 	//void DrawCube(const glm::vec3& position);
 	//void DrawWireframeCube(const glm::vec3& position);
-	void DrawChunk(const ChunkMesh& mesh);
+	void DrawChunk(Chunk* chunk);
 	void finishRender(const Player& player);
 	void UpdateOrthoProjMatrix();
 private:

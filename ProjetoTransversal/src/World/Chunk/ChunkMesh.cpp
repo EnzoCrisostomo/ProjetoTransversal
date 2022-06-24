@@ -66,21 +66,33 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
+		Vertex vertex = 0x0u;
+
+		//positions
+		vertex |= (int)blockFace[index] + blockPosition.x << 0;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
+
+		vertex |= (int)blockFace[index] + blockPosition.y << 6;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
 		index++;
+
+		vertex |= (int)blockFace[index] + blockPosition.z << 12;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
 
-		float value = 1;
-		if (blockFace == Face::left || blockFace == Face::right)
-			value = 0.85;
-		else if (blockFace == Face::front || blockFace == Face::back)
-			value = 0.80;
-		else if (blockFace == Face::bottom)
-			value = 0.7;
-		m_blocksMesh.lightValues.push_back(value);
+		//iluminação
+		int value = 3 * (blockFace == Face::top) 
+				  + 2 * (blockFace == Face::left  || blockFace == Face::right)
+				  + 1 * (blockFace == Face::front || blockFace == Face::back)
+				  + 0 * (blockFace == Face::bottom);
+		vertex |= value << 18;
+	
+		//textura temporaria
+		vertex |= 4 << 20;
+		
+		m_blocksMesh.lightValues.push_back((value + 2)/5.f);
+		m_blocksMesh.vertices.push_back(vertex);
 	}
 	//Texture coords
 	m_blocksMesh.textureCoordinates.insert(m_blocksMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
@@ -105,6 +117,9 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 							 const glm::ivec3& blockPosition,
 							 const bool isUpper)
 {
+	return;
+
+
 	if(isUpper)
 		for (int i = 1; i < 11; i+=3)
 			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;
@@ -139,6 +154,10 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 
 void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
 {
+
+	return;
+
+
 	const std::vector<GLfloat>& blockFace =
 	{
 		0, 0, 1,
