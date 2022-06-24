@@ -29,7 +29,7 @@ void MasterRenderer::finishRender(const Player& player)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//m_quadRenderer.RenderQuads(player);
 	m_chunkRenderer.RenderChunks(player);
-	m_guiRenderer.RenderGui();
+	//m_guiRenderer.RenderGui();
 	//m_cubeRenderer.RenderCubes(player);
 	//m_wireframeRenderer.RenderWireframe(player);
 	//glCheckError();

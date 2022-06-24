@@ -70,19 +70,14 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 
 		//positions
 		vertex |= (int)blockFace[index] + blockPosition.x << 0;
-		index++;
-		vertex |= (int)blockFace[index] + blockPosition.y << 4;
-		index++;
-		vertex |= (int)blockFace[index] + blockPosition.z << 8;
-		index++;
-
-		//textura temporaria
-		vertex |= 4 << 12;
-
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
+
+		vertex |= (int)blockFace[index] + blockPosition.y << 6;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
 		index++;
+
+		vertex |= (int)blockFace[index] + blockPosition.z << 12;
 		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
 
@@ -93,7 +88,10 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 				  + 0 * (blockFace == Face::bottom);
 		vertex |= value << 18;
 	
-		m_blocksMesh.lightValues.push_back(value);
+		//textura temporaria
+		vertex |= 4 << 20;
+		
+		m_blocksMesh.lightValues.push_back((value + 2)/5.f);
 		m_blocksMesh.vertices.push_back(vertex);
 	}
 	//Texture coords

@@ -46,7 +46,7 @@ void ChunkRenderer::RenderBlocks(const Player& player)
     for (Chunk* chunk : m_chunks)
     {
         chunk->GetMesh().GetBlocksModel().BindVao();
-        m_shader.LoadVec3(u_chunkPos, glm::vec3(chunk->GetLocation()));
+        m_shader.LoadVec3(u_chunkPos, glm::vec3(chunk->GetLocation() * static_cast<float>(Options::chunkSize)));
 
         glDrawElements(GL_TRIANGLES, chunk->GetMesh().GetBlocksModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }

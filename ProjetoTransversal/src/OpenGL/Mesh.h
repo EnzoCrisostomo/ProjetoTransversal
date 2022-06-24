@@ -16,10 +16,12 @@ struct Mesh
 		textureCoordinates.clear();
 		lightValues.clear();
 		indices.clear();
+		vertices.clear();
 
 		vertexPositions.shrink_to_fit();
 		textureCoordinates.shrink_to_fit();
 		lightValues.shrink_to_fit();
 		indices.shrink_to_fit();
+		vertices.shrink_to_fit();
 	}
 };

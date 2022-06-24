@@ -5,11 +5,13 @@ class VertexBuffer
 {
 public:
 	VertexBuffer() = default;
-	VertexBuffer(const void* data, unsigned int size);
 	~VertexBuffer();
 	void Bind() const;
 	void Unbind() const;
-	void SetData(const void* data, unsigned int size);
+
+	template<typename T>
+	void SetData(const T* data, unsigned int size);
+
 	void DeleteData();
 
 private:

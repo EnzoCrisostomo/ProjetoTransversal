@@ -1,16 +1,28 @@
 #include <glad/glad.h>
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size)
-{
-	SetData(data, size);
-}
-
-void VertexBuffer::SetData(const void* data, unsigned int size)
+template<typename T>
+void VertexBuffer::SetData(const T* data, unsigned int size)
 {
 	glGenBuffers(1, &m_id);
 	glBindBuffer(GL_ARRAY_BUFFER, m_id);
-	glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size * sizeof(T), static_cast<const void*>(data), GL_STATIC_DRAW);
+}
+
+template<>
+void VertexBuffer::SetData<GLfloat>(const GLfloat* data, unsigned int size)
+{
+	glGenBuffers(1, &m_id);
+	glBindBuffer(GL_ARRAY_BUFFER, m_id);
+	glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), static_cast<const void*>(data), GL_STATIC_DRAW);
+}
+
+template<>
+void VertexBuffer::SetData<GLuint>(const GLuint* data, unsigned int size)
+{
+	glGenBuffers(1, &m_id);
+	glBindBuffer(GL_ARRAY_BUFFER, m_id);
+	glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLuint), static_cast<const void*>(data), GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer()
