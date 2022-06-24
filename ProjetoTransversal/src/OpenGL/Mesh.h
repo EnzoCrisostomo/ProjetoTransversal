@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Vertex.h"
 
 struct Mesh
 {
@@ -7,6 +8,7 @@ struct Mesh
 	std::vector<GLfloat> textureCoordinates;
 	std::vector<GLfloat> lightValues;
 	std::vector<GLuint>  indices;
+	std::vector<Vertex>  vertices;
 
 	void Free() 
 	{

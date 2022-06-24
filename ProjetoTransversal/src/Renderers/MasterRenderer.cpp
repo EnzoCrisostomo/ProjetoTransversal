@@ -18,9 +18,9 @@
 //	m_wireframeRenderer.AddToQueue(position);
 //}
 
-void MasterRenderer::DrawChunk(const ChunkMesh& mesh)
+void MasterRenderer::DrawChunk(Chunk* chunk)
 {
-	m_chunkRenderer.AddToQueue(mesh);
+	m_chunkRenderer.AddToQueue(chunk);
 }
 
 void MasterRenderer::finishRender(const Player& player)
