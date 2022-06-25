@@ -116,18 +116,18 @@ void ChunkMeshBuilder::TryToAddBlock(const BlockId& blockId, const glm::ivec3& b
     }
 }
 
-void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GLfloat>& blockFace, const std::vector<GLfloat>& textureCoords,
+void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GLfloat>& blockFace, const uint8_t& textureIndex,
                                     const glm::ivec3& blockPosition, const glm::ivec3& blockFacing)
 {
     const BlockId& blockFacingId = m_chunk->GetBlock(blockFacing);
     if (ShouldMakeFace(blockId, blockFacingId))
     {
         if(blockId != BlockId::Water)
-            m_chunkMesh->AddBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition);
+            m_chunkMesh->AddBlockFace(blockFace, textureIndex, m_chunk->GetLocation(), blockPosition);
         else
         {
             bool isUpperWaterBlock = m_chunk->GetBlock(blockPosition.x, blockPosition.y + 1, blockPosition.z) != BlockId::Water;
-            m_chunkMesh->AddWaterBlockFace(blockFace, textureCoords, m_chunk->GetLocation(), blockPosition, isUpperWaterBlock);
+            m_chunkMesh->AddWaterBlockFace(blockFace, textureIndex, m_chunk->GetLocation(), blockPosition, isUpperWaterBlock);
         }
     }
 }

@@ -40,9 +40,9 @@ BlockDatabase::BlockDatabase()
 	m_blockData.emplace_back("BlueOrchid"	, BlockId::BlueOrchid	, false, Transparency::Half  , true , 34);
 }
 
+//Retorna as informacoes do bloco de acordo com o id de bloco passado
 const Block& BlockDatabase::GetBlockInfo(const BlockId& blockId) const
 {
-	//retorna as informacoes do bloco de acordo com o id de bloco passado
 	for (auto& bloco : m_blockData)
 		if (bloco.GetId() == blockId)
 			return bloco;

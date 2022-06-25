@@ -1,7 +1,5 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "quadRenderer.h"
-#include "CubeRenderer.h"
 #include "ChunkRenderer.h"
 #include "GuiRenderer.h"
 #include "WireframeRenderer.h"

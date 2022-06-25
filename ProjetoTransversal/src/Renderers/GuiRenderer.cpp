@@ -59,7 +59,7 @@ void GuiRenderer::RenderGui()
 
 void GuiRenderer::AddQuad(const glm::vec2& position, const float size, const glm::vec2 textureCoords)
 {
-    m_mesh.vertexPositions.push_back(position.x);
+    /*m_mesh.vertexPositions.push_back(position.x);
     m_mesh.vertexPositions.push_back(position.y);
     m_mesh.vertexPositions.push_back(0.0f);
     m_mesh.textureCoordinates.push_back(textureCoords.x);
@@ -81,7 +81,7 @@ void GuiRenderer::AddQuad(const glm::vec2& position, const float size, const glm
     m_mesh.vertexPositions.push_back(position.y);
     m_mesh.vertexPositions.push_back(0.0f);
     m_mesh.textureCoordinates.push_back(textureCoords.x + 0.5);
-    m_mesh.textureCoordinates.push_back(textureCoords.y);
+    m_mesh.textureCoordinates.push_back(textureCoords.y);*/
 
     m_mesh.indices.insert(m_mesh.indices.end(),
         {

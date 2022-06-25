@@ -41,7 +41,7 @@ enum class BlockId : uint8_t
 	blockCount
 };
 
-enum class Transparency
+enum class Transparency : uint8_t
 {
 	Opaque,
 	Half,
@@ -52,14 +52,9 @@ class Block
 {
 public:
 	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation,
-		const glm::vec2& topTextureCoords, const glm::vec2& sideTextureCoords, const glm::vec2& bottomTextureCoords);
-	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation,
-		const unsigned int topTextureIndex, const unsigned int sideTextureIndex, const unsigned int bottomTextureIndex);
-
+		const uint8_t topTextureIndex, const uint8_t sideTextureIndex, const uint8_t bottomTextureIndex);
 	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation, 
-		const glm::vec2& textureCoords);
-	Block(const char* name, const BlockId& blockId, const bool isSolid, Transparency isTransparent, const bool isVegetation, 
-		const unsigned int textureIndex);
+		const uint8_t textureIndex);
 
 	const bool operator == (const Block& other) const
 	{
@@ -73,17 +68,14 @@ public:
 	const char* GetName() const { return m_name; };
 	const BlockId& GetId() const { return m_blockId; };
 
-	const std::vector<GLfloat>& GetTopTexture() const;
-	const std::vector<GLfloat>& GetSideTexture() const;
-	const std::vector<GLfloat>& GetBottomTexture() const;
-private:
-	glm::vec2 IndexToTextureCoords(unsigned int i) const;
-	void Generatetextures(const glm::vec2& topTextureCoords,
-		const glm::vec2& sideTextureCoords, const glm::vec2& bottomTextureCoords);
+	const uint8_t& GetTopTexture() const;
+	const uint8_t& GetSideTexture() const;
+	const uint8_t& GetBottomTexture() const;
 
-	std::vector<GLfloat> m_topTextureVector;
-	std::vector<GLfloat> m_sideTextureVector;
-	std::vector<GLfloat> m_bottomTextureVector;
+private:
+	uint8_t m_topTextureIndex;
+	uint8_t m_sideTextureIndex;
+	uint8_t m_bottomTextureIndex;
 
 	const char* m_name;
 	const BlockId m_blockId;

@@ -11,16 +11,16 @@ public:
 
 
 	void AddBlockFace(const std::vector<GLfloat>& blockFace,
-					  const std::vector<GLfloat>& textureCoords,
+					  const uint8_t& textureIndex,
 					  const glm::ivec3& chunkPosition,
 					  const glm::ivec3& blockPosition);
 
-	void AddVegetationBlock(const std::vector<GLfloat>& textureCoords,
+	void AddVegetationBlock(const uint8_t& textureIndex,
 							const glm::ivec3& chunkPosition,
 							const glm::ivec3& blockPosition);
 
 	void AddWaterBlockFace(std::vector<GLfloat> blockFace,
-						   const std::vector<GLfloat>& textureCoords,
+						   const uint8_t& textureIndex,
 						   const glm::ivec3& chunkPosition,
 						   const glm::ivec3& blockPosition,
 						   const bool isUpper);

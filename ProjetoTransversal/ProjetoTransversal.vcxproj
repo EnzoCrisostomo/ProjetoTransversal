@@ -173,10 +173,8 @@
     <ClCompile Include="src\Options\Options.cpp" />
     <ClCompile Include="src\Player\Player.cpp" />
     <ClCompile Include="src\Renderers\ChunkRenderer.cpp" />
-    <ClCompile Include="src\Renderers\CubeRenderer.cpp" />
     <ClCompile Include="src\Renderers\GuiRenderer.cpp" />
     <ClCompile Include="src\Renderers\MasterRenderer.cpp" />
-    <ClCompile Include="src\Renderers\quadRenderer.cpp" />
     <ClCompile Include="src\Renderers\WireFrameRenderer.cpp" />
     <ClCompile Include="src\States\MainMenuState.cpp" />
     <ClCompile Include="src\States\PlayingState.cpp" />
@@ -210,10 +208,8 @@
     <ClInclude Include="src\Options\Options.h" />
     <ClInclude Include="src\Player\Player.h" />
     <ClInclude Include="src\Renderers\ChunkRenderer.h" />
-    <ClInclude Include="src\Renderers\CubeRenderer.h" />
     <ClInclude Include="src\Renderers\GuiRenderer.h" />
     <ClInclude Include="src\Renderers\MasterRenderer.h" />
-    <ClInclude Include="src\Renderers\quadRenderer.h" />
     <ClInclude Include="src\Renderers\WireFrameRenderer.h" />
     <ClInclude Include="src\States\BaseState.h" />
     <ClInclude Include="src\States\MainMenuState.h" />

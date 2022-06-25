@@ -59,7 +59,7 @@ ChunkMesh::~ChunkMesh()
 
 //Adiciona os vertices de uma face para a mesh
 void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
-							 const std::vector<GLfloat>& textureCoords,
+							 const uint8_t& textureIndex,
 							 const glm::ivec3& chunkPosition,
 							 const glm::ivec3& blockPosition)
 {
@@ -70,33 +70,24 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 
 		//positions
 		vertex |= (int)blockFace[index] + blockPosition.x << 0;
-		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
-
 		vertex |= (int)blockFace[index] + blockPosition.y << 6;
-		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
 		index++;
-
 		vertex |= (int)blockFace[index] + blockPosition.z << 12;
-		m_blocksMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
 
 		//iluminação
-		int value = 3 * (blockFace == Face::top) 
-				  + 2 * (blockFace == Face::left  || blockFace == Face::right)
-				  + 1 * (blockFace == Face::front || blockFace == Face::back)
-				  + 0 * (blockFace == Face::bottom);
+		uint8_t value = 3 * (blockFace == Face::top)
+					  + 2 * (blockFace == Face::left  || blockFace == Face::right)
+					  + 1 * (blockFace == Face::front || blockFace == Face::back)
+					  + 0 * (blockFace == Face::bottom);
 		vertex |= value << 18;
 	
-		//textura temporaria
-		vertex |= 4 << 20;
+		//textura
+		vertex |= textureIndex << 20;
 		
-		m_blocksMesh.lightValues.push_back((value + 2)/5.f);
 		m_blocksMesh.vertices.push_back(vertex);
 	}
-	//Texture coords
-	m_blocksMesh.textureCoordinates.insert(m_blocksMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
-
 	//Indices
 	m_blocksMesh.indices.insert(m_blocksMesh.indices.end(),
 		{
@@ -112,7 +103,7 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 }
 
 void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
-							 const std::vector<GLfloat>& textureCoords,
+							 const uint8_t& textureIndex,
 							 const glm::ivec3& chunkPosition,
 							 const glm::ivec3& blockPosition,
 							 const bool isUpper)
@@ -125,7 +116,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;
 
 	//Vertex Positions
-	for (int i = 0, index = 0; i < 4; i++)
+	/*for (int i = 0, index = 0; i < 4; i++)
 	{
 		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
@@ -133,10 +124,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 		index++;
 		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
 		index++;
-		m_waterMesh.lightValues.push_back(1.0f);
-	}
-	//Texture coords
-	m_waterMesh.textureCoordinates.insert(m_waterMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
+	}*/
 	
 	//Indices
 	m_waterMesh.indices.insert(m_waterMesh.indices.end(),
@@ -152,7 +140,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 	m_waterIndicesCount += 4;
 }
 
-void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
+void ChunkMesh::AddVegetationBlock(const uint8_t& textureIndex, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
 {
 
 	return;
@@ -173,19 +161,16 @@ void ChunkMesh::AddVegetationBlock(const std::vector<GLfloat>& textureCoords, co
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 8; i++)
 	{
-		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		/*m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
 		index++;
 		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
 		index++;
 		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
-		index++;
-		m_vegetationMesh.lightValues.push_back(1.0f);
+		index++;*/
 	}
 
 	for (int i = 0; i < 2; i++)
 	{
-		//Texture coords
-		m_vegetationMesh.textureCoordinates.insert(m_vegetationMesh.textureCoordinates.end(), textureCoords.begin(), textureCoords.end());
 		//Indices
 		m_vegetationMesh.indices.insert(m_vegetationMesh.indices.end(),
 			{
