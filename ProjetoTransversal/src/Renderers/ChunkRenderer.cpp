@@ -63,6 +63,7 @@ void ChunkRenderer::RenderVegetation(const Player& player)
         if (!chunk->GetMesh().HasVegetation())
             continue;
         chunk->GetMesh().GetVegetationModel().BindVao();
+        m_shader.LoadVec3(u_chunkPos, glm::vec3(chunk->GetLocation() * static_cast<float>(Options::chunkSize)));
 
         glDrawElements(GL_TRIANGLES, chunk->GetMesh().GetVegetationModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }
@@ -87,6 +88,7 @@ void ChunkRenderer::RenderWater(const Player& player)
         if (!chunk->GetMesh().HasWater())
             continue;
         chunk->GetMesh().GetWaterModel().BindVao();
+        m_shader.LoadVec3(u_chunkPos, glm::vec3(chunk->GetLocation() * static_cast<float>(Options::chunkSize)));
 
         glDrawElements(GL_TRIANGLES, chunk->GetMesh().GetWaterModel().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
     }

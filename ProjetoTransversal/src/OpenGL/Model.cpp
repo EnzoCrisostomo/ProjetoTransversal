@@ -2,7 +2,7 @@
 
 #include "VertexBufferLayout.h"
 
-Model::Model(Mesh& mesh)
+Model::Model(const Mesh& mesh)
 {
 	SetData(mesh);
 }
@@ -45,9 +45,7 @@ GLuint Model::GetIndicesCount() const
 
 void Model::DeleteData()
 {
-	m_vertexPositions.DeleteData();
-	m_vertexTextureCoordinates.DeleteData();
-	m_vertexLightValue.DeleteData();
+	m_vertices.DeleteData();
 
 	m_indexBuffer.DeleteData();
 	

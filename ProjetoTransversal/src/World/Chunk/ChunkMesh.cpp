@@ -53,6 +53,8 @@ namespace Face
 	};
 }
 
+static constexpr uint8_t textureIndices[] = { 0, 1, 3, 2 };
+
 ChunkMesh::~ChunkMesh()
 {
 }
@@ -69,11 +71,11 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 		Vertex vertex = 0x0u;
 
 		//positions
-		vertex |= (int)blockFace[index] + blockPosition.x << 0;
+		vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
 		index++;
-		vertex |= (int)blockFace[index] + blockPosition.y << 6;
+		vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
 		index++;
-		vertex |= (int)blockFace[index] + blockPosition.z << 12;
+		vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
 		index++;
 
 		//iluminação
@@ -85,7 +87,8 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 	
 		//textura
 		vertex |= textureIndex << 20;
-		
+		//Para determinar qual ponta do quad da textura
+		vertex |= textureIndices[i] << 26;
 		m_blocksMesh.vertices.push_back(vertex);
 	}
 	//Indices
@@ -108,23 +111,38 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 							 const glm::ivec3& blockPosition,
 							 const bool isUpper)
 {
-	return;
+	//TODO refazer altura da agua no bloco de cima
 
-
-	if(isUpper)
+	/*if(isUpper)
 		for (int i = 1; i < 11; i+=3)
-			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;
+			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;*/
 
 	//Vertex Positions
-	/*for (int i = 0, index = 0; i < 4; i++)
+	for (int i = 0, index = 0; i < 4; i++)
 	{
-		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		Vertex vertex = 0x0u;
+
+		//positions
+		vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
 		index++;
-		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
 		index++;
-		m_waterMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
+		vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
 		index++;
-	}*/
+
+		//iluminação
+		uint8_t value = 3 * (blockFace == Face::top)
+					  + 2 * (blockFace == Face::left  || blockFace == Face::right)
+					  + 1 * (blockFace == Face::front || blockFace == Face::back)
+					  + 0 * (blockFace == Face::bottom);
+		vertex |= value << 18;
+	
+		//textura
+		vertex |= textureIndex << 20;
+		//Para determinar qual ponta do quad da textura
+		vertex |= textureIndices[i] << 26;
+		m_waterMesh.vertices.push_back(vertex);
+	}
 	
 	//Indices
 	m_waterMesh.indices.insert(m_waterMesh.indices.end(),
@@ -142,10 +160,6 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 
 void ChunkMesh::AddVegetationBlock(const uint8_t& textureIndex, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
 {
-
-	return;
-
-
 	const std::vector<GLfloat>& blockFace =
 	{
 		0, 0, 1,
@@ -161,12 +175,28 @@ void ChunkMesh::AddVegetationBlock(const uint8_t& textureIndex, const glm::ivec3
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 8; i++)
 	{
-		/*m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.x * Options::chunkSize + blockPosition.x);
+		Vertex vertex = 0x0u;
+
+		//positions
+		vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
 		index++;
-		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.y * Options::chunkSize + blockPosition.y);
+		vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
 		index++;
-		m_vegetationMesh.vertexPositions.push_back(blockFace[index] + chunkPosition.z * Options::chunkSize + blockPosition.z);
-		index++;*/
+		vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
+		index++;
+
+		//iluminação
+		uint8_t value = 3 * (blockFace == Face::top)
+			+ 2 * (blockFace == Face::left || blockFace == Face::right)
+			+ 1 * (blockFace == Face::front || blockFace == Face::back)
+			+ 0 * (blockFace == Face::bottom);
+		vertex |= value << 18;
+
+		//textura
+		vertex |= textureIndex << 20;
+		//Para determinar qual ponta do quad da textura
+		vertex |= textureIndices[i%4] << 26;
+		m_vegetationMesh.vertices.push_back(vertex);
 	}
 
 	for (int i = 0; i < 2; i++)

@@ -32,7 +32,7 @@ void MasterRenderer::finishRender(const Player& player)
 	//m_guiRenderer.RenderGui();
 	//m_cubeRenderer.RenderCubes(player);
 	//m_wireframeRenderer.RenderWireframe(player);
-	//glCheckError();
+	glCheckError();
 }
 
 void MasterRenderer::UpdateOrthoProjMatrix()

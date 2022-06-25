@@ -9,7 +9,7 @@ class Model
 {
 public:
 	Model() = default;
-	Model(Mesh& mesh);
+	Model(const Mesh& mesh);
 	~Model();
 
 	void SetData(const Mesh& mesh);
@@ -18,9 +18,6 @@ public:
 	GLuint GetIndicesCount() const;
 
 private:
-	VertexBuffer m_vertexPositions;
-	VertexBuffer m_vertexTextureCoordinates;
-	VertexBuffer m_vertexLightValue;
 	VertexBuffer m_vertices;
 	IndexBuffer m_indexBuffer;
 	VertexArray m_vertexArray;
