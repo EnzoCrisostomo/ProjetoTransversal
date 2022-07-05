@@ -101,7 +101,7 @@ void ChunkMeshBuilder::TryToAddBlock(const BlockId& blockId, const glm::ivec3& b
 
     if (block.IsVegetation())
     {
-        m_chunkMesh->AddVegetationBlock(block.GetSideTexture(), m_chunk->GetLocation(), blockPosition);
+        m_chunkMesh->AddVegetationBlock(block.GetSideTexture(), blockPosition);
     }
     else
     {
@@ -123,11 +123,11 @@ void ChunkMeshBuilder::TryToAddFace(const BlockId& blockId, const std::vector<GL
     if (ShouldMakeFace(blockId, blockFacingId))
     {
         if(blockId != BlockId::Water)
-            m_chunkMesh->AddBlockFace(blockFace, textureIndex, m_chunk->GetLocation(), blockPosition);
+            m_chunkMesh->AddBlockFace(blockFace, textureIndex, blockPosition);
         else
         {
             bool isUpperWaterBlock = m_chunk->GetBlock(blockPosition.x, blockPosition.y + 1, blockPosition.z) != BlockId::Water;
-            m_chunkMesh->AddWaterBlockFace(blockFace, textureIndex, m_chunk->GetLocation(), blockPosition, isUpperWaterBlock);
+            m_chunkMesh->AddWaterBlockFace(blockFace, textureIndex, blockPosition, isUpperWaterBlock);
         }
     }
 }

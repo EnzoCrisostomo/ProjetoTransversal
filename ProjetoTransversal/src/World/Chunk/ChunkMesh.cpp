@@ -2,6 +2,8 @@
 #include "Options/Options.h"
 #include <iostream>
 
+static constexpr uint8_t textureIndices[] = { 0, 1, 3, 2 };
+
 namespace Face
 {
 	const std::vector<GLfloat> front
@@ -51,9 +53,20 @@ namespace Face
 		1, 0, 1,
 		0, 0, 1
 	};
-}
 
-static constexpr uint8_t textureIndices[] = { 0, 1, 3, 2 };
+	const std::vector<GLfloat> diagonals =
+	{
+		0, 0, 1,
+		1, 0, 0,
+		1, 1, 0,
+		0, 1, 1,
+
+		1, 0, 1,
+		0, 0, 0,
+		0, 1, 0,
+		1, 1, 1,
+	};
+}
 
 ChunkMesh::~ChunkMesh()
 {
@@ -62,34 +75,12 @@ ChunkMesh::~ChunkMesh()
 //Adiciona os vertices de uma face para a mesh
 void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 							 const uint8_t& textureIndex,
-							 const glm::ivec3& chunkPosition,
 							 const glm::ivec3& blockPosition)
 {
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
-		Vertex vertex = 0x0u;
-
-		//positions
-		vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
-		index++;
-		vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
-		index++;
-		vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
-		index++;
-
-		//iluminação
-		uint8_t value = 3 * (blockFace == Face::top)
-					  + 2 * (blockFace == Face::left  || blockFace == Face::right)
-					  + 1 * (blockFace == Face::front || blockFace == Face::back)
-					  + 0 * (blockFace == Face::bottom);
-		vertex |= value << 18;
-	
-		//textura
-		vertex |= textureIndex << 20;
-		//Para determinar qual ponta do quad da textura
-		vertex |= textureIndices[i] << 26;
-		m_blocksMesh.vertices.push_back(vertex);
+		m_blocksMesh.vertices.push_back(MountVertex(blockFace, textureIndex, blockPosition, i, index));
 	}
 	//Indices
 	m_blocksMesh.indices.insert(m_blocksMesh.indices.end(),
@@ -107,7 +98,6 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 
 void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 							 const uint8_t& textureIndex,
-							 const glm::ivec3& chunkPosition,
 							 const glm::ivec3& blockPosition,
 							 const bool isUpper)
 {
@@ -120,28 +110,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
-		Vertex vertex = 0x0u;
-
-		//positions
-		vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
-		index++;
-		vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
-		index++;
-		vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
-		index++;
-
-		//iluminação
-		uint8_t value = 3 * (blockFace == Face::top)
-					  + 2 * (blockFace == Face::left  || blockFace == Face::right)
-					  + 1 * (blockFace == Face::front || blockFace == Face::back)
-					  + 0 * (blockFace == Face::bottom);
-		vertex |= value << 18;
-	
-		//textura
-		vertex |= textureIndex << 20;
-		//Para determinar qual ponta do quad da textura
-		vertex |= textureIndices[i] << 26;
-		m_waterMesh.vertices.push_back(vertex);
+		m_waterMesh.vertices.push_back(MountVertex(blockFace, textureIndex, blockPosition, i, index));
 	}
 	
 	//Indices
@@ -158,45 +127,13 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 	m_waterIndicesCount += 4;
 }
 
-void ChunkMesh::AddVegetationBlock(const uint8_t& textureIndex, const glm::ivec3& chunkPosition, const glm::ivec3& blockPosition)
+void ChunkMesh::AddVegetationBlock(const uint8_t& textureIndex, const glm::ivec3& blockPosition)
 {
-	const std::vector<GLfloat>& blockFace =
-	{
-		0, 0, 1,
-		1, 0, 0,
-		1, 1, 0,
-		0, 1, 1, 
-	
-		1, 0, 1,
-		0, 0, 0,
-		0, 1, 0,
-		1, 1, 1,
-	};
+	const std::vector<GLfloat>& blockFace = Face::diagonals;
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 8; i++)
 	{
-		Vertex vertex = 0x0u;
-
-		//positions
-		vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
-		index++;
-		vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
-		index++;
-		vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
-		index++;
-
-		//iluminação
-		uint8_t value = 3 * (blockFace == Face::top)
-			+ 2 * (blockFace == Face::left || blockFace == Face::right)
-			+ 1 * (blockFace == Face::front || blockFace == Face::back)
-			+ 0 * (blockFace == Face::bottom);
-		vertex |= value << 18;
-
-		//textura
-		vertex |= textureIndex << 20;
-		//Para determinar qual ponta do quad da textura
-		vertex |= textureIndices[i%4] << 26;
-		m_vegetationMesh.vertices.push_back(vertex);
+		m_vegetationMesh.vertices.push_back(MountVertex(blockFace, textureIndex, blockPosition, i, index));
 	}
 
 	for (int i = 0; i < 2; i++)
@@ -246,4 +183,34 @@ const Model& ChunkMesh::GetBlocksModel() const
 const Model& ChunkMesh::GetWaterModel() const
 {
 	return m_waterModel;
+}
+
+inline Vertex ChunkMesh::MountVertex(const std::vector<GLfloat> &blockFace, const uint8_t& textureIndex,
+									 const glm::ivec3& blockPosition, int &i, int &index) const
+{
+	Vertex vertex = 0x0u;
+
+	//positions
+	vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
+	index++;
+	vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
+	index++;
+	vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
+	index++;
+
+	//iluminação
+	uint8_t value = 4;
+	value = 3 * (blockFace == Face::top || blockFace == Face::diagonals)
+		+ 2 * (blockFace == Face::left || blockFace == Face::right)
+		+ 1 * (blockFace == Face::front || blockFace == Face::back)
+		+ 0 * (blockFace == Face::bottom);
+
+	vertex |= value << 18;
+
+	//textura
+	vertex |= textureIndex << 20;
+	//Para determinar qual ponta do quad da textura
+	vertex |= textureIndices[i%4] << 26;
+
+	return vertex;
 }
