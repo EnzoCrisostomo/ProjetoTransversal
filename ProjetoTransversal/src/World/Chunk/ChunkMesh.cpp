@@ -188,29 +188,27 @@ const Model& ChunkMesh::GetWaterModel() const
 inline Vertex ChunkMesh::MountVertex(const std::vector<GLfloat> &blockFace, const uint8_t& textureIndex,
 									 const glm::ivec3& blockPosition, int &i, int &index) const
 {
-	Vertex vertex = 0x0u;
+	Vertex vertex;
 
 	//positions
-	vertex |= ((int)blockFace[index] + blockPosition.x) << 0;
+	vertex.positions.x = (int)blockFace[index] + blockPosition.x * 8;
 	index++;
-	vertex |= ((int)blockFace[index] + blockPosition.y) << 6;
+	vertex.positions.y = (int)blockFace[index] + blockPosition.y * 8;
 	index++;
-	vertex |= ((int)blockFace[index] + blockPosition.z) << 12;
+	vertex.positions.z = (int)blockFace[index] + blockPosition.z * 8;
 	index++;
 
 	//iluminação
-	uint8_t value = 4;
-	value = 3 * (blockFace == Face::top || blockFace == Face::diagonals)
+	vertex.light = 3 * (blockFace == Face::top || blockFace == Face::diagonals)
 		+ 2 * (blockFace == Face::left || blockFace == Face::right)
 		+ 1 * (blockFace == Face::front || blockFace == Face::back)
 		+ 0 * (blockFace == Face::bottom);
 
-	vertex |= value << 18;
-
 	//textura
-	vertex |= textureIndex << 20;
+	uint8_t value = textureIndex << 20;
 	//Para determinar qual ponta do quad da textura
-	vertex |= textureIndices[i%4] << 26;
+	value |= textureIndices[i%4] << 6;
+	vertex.textureIndex = value;
 
 	return vertex;
 }

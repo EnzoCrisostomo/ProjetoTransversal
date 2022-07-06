@@ -1,6 +1,8 @@
 #version 330 core
 
-layout (location = 0) in uint vertex;
+layout (location = 0) in uvec3 vertexPos;
+layout (location = 1) in uint vertexLight;
+layout (location = 2) in uint vertexTextureIndex;
 
 out vec2 TexCoordinates;
 out float LightValue;
@@ -15,37 +17,35 @@ const float TEXTURE_ATLAS_SIZE = 8.0;
 const float TEXTURE_STEP = 1.0 / TEXTURE_ATLAS_SIZE;
 
 
-float extract_light_value(uint vert)
+float extract_light_value(uint value)
 {
-    uint rawValue = (vert >> 18u) & 0x3u;
+    uint rawValue = value;
     return float(rawValue + 2u)/5.0;
 }
 
-vec2 extract_texCoords(uint vert)
+vec2 extract_texCoords(uint texIndex)
 {
-    uint index = (vert >> 20u) & 0x3Fu;
+    uint index = texIndex & 0x3Fu;
     float u = float(index % 8u);
     float v = float(index / 8u);
-    u +=  1 * float((vert >> 26) & 0x01u);
-    v -=  1 * float((vert >> 27) & 0x01u);
+    u +=  1 * float((texIndex >> 6) & 0x01u);
+    v -=  1 * float((texIndex >> 7) & 0x01u);
     return vec2(u * TEXTURE_STEP, 1.0 - ((v + 1.0) * TEXTURE_STEP));
 }
 
-vec3 extract_pos(uint vert)
+vec3 extract_pos(uvec3 rawPos)
 {
-    float x = float(vert & 0x3Fu);
-    float y = float((vert & 0xFC0u) >> 6u);
-    float z = float((vert & 0x3F000u) >> 12u);
+    vec3 fPos = vec3(rawPos)/8;
 
-    return vec3(x, y, z) + chunkPos;
+    return fPos + chunkPos;
 }
 
 void main()
 {
-    vec3 vertPos = extract_pos(vertex);
-    TexCoordinates = extract_texCoords(vertex);
+    vec3 vertPos = extract_pos(vertexPos);
+    TexCoordinates = extract_texCoords(vertexTextureIndex);
 
-    LightValue = extract_light_value(vertex);
+    LightValue = extract_light_value(vertexLight);
 
     FragPos = vec3(modelMatrix * vec4(vertPos, 1.0));
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertPos, 1.0);

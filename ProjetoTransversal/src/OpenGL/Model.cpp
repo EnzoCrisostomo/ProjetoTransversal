@@ -21,12 +21,16 @@ void Model::SetData(const Mesh& mesh)
 	//TODO Classe para layouts
 	//VertexBufferLayout layout;
 
-	m_vertices.SetData<GLuint>(mesh.vertices.data(),
+	m_vertices.SetData<Vertex>(mesh.vertices.data(),
 		static_cast<unsigned int>(mesh.vertices.size()));
 
 	//Vertices
-	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (GLvoid*)0);
+	glVertexAttribIPointer(0, 3, GL_UNSIGNED_BYTE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, positions));
 	glEnableVertexAttribArray(0);
+	glVertexAttribIPointer(1, 1, GL_UNSIGNED_BYTE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, light));
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, textureIndex));
+	glEnableVertexAttribArray(2);
 
 	m_indexBuffer.SetData(mesh.indices.data(),
 		static_cast<unsigned int>(mesh.indices.size()));
