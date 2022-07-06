@@ -102,10 +102,9 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 							 const bool isUpper)
 {
 	//TODO refazer altura da agua no bloco de cima
-
-	/*if(isUpper)
+	if(isUpper)
 		for (int i = 1; i < 11; i+=3)
-			blockFace[i] = blockFace[i] == 1 ? 0.8f : 0;*/
+			blockFace[i] = blockFace[i] == 1 ? 0.875f : 0;
 
 	//Vertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
@@ -191,11 +190,11 @@ inline Vertex ChunkMesh::MountVertex(const std::vector<GLfloat> &blockFace, cons
 	Vertex vertex;
 
 	//positions
-	vertex.positions.x = (int)blockFace[index] + blockPosition.x * 8;
+	vertex.positions.x = (blockFace[index] + blockPosition.x) * 8;
 	index++;
-	vertex.positions.y = (int)blockFace[index] + blockPosition.y * 8;
+	vertex.positions.y = (blockFace[index] + blockPosition.y) * 8;
 	index++;
-	vertex.positions.z = (int)blockFace[index] + blockPosition.z * 8;
+	vertex.positions.z = (blockFace[index] + blockPosition.z) * 8;
 	index++;
 
 	//iluminação
@@ -205,7 +204,7 @@ inline Vertex ChunkMesh::MountVertex(const std::vector<GLfloat> &blockFace, cons
 		+ 0 * (blockFace == Face::bottom);
 
 	//textura
-	uint8_t value = textureIndex << 20;
+	uint8_t value = textureIndex;
 	//Para determinar qual ponta do quad da textura
 	value |= textureIndices[i%4] << 6;
 	vertex.textureIndex = value;
