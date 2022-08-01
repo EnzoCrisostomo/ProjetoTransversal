@@ -77,7 +77,7 @@ void ChunkMesh::AddBlockFace(const std::vector<GLfloat>& blockFace,
 							 const uint8_t& textureIndex,
 							 const glm::ivec3& blockPosition)
 {
-	//Vertex Positions
+	//ChunkVertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
 		m_blocksMesh.vertices.push_back(MountVertex(blockFace, textureIndex, blockPosition, i, index));
@@ -106,7 +106,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 		for (int i = 1; i < 11; i+=3)
 			blockFace[i] = blockFace[i] == 1 ? 0.875f : 0;
 
-	//Vertex Positions
+	//ChunkVertex Positions
 	for (int i = 0, index = 0; i < 4; i++)
 	{
 		m_waterMesh.vertices.push_back(MountVertex(blockFace, textureIndex, blockPosition, i, index));
@@ -129,7 +129,7 @@ void ChunkMesh::AddWaterBlockFace(std::vector<GLfloat> blockFace,
 void ChunkMesh::AddVegetationBlock(const uint8_t& textureIndex, const glm::ivec3& blockPosition)
 {
 	const std::vector<GLfloat>& blockFace = Face::diagonals;
-	//Vertex Positions
+	//ChunkVertex Positions
 	for (int i = 0, index = 0; i < 8; i++)
 	{
 		m_vegetationMesh.vertices.push_back(MountVertex(blockFace, textureIndex, blockPosition, i, index));
@@ -171,23 +171,23 @@ void ChunkMesh::BufferMesh()
 	m_waterIndicesCount = 0;
 }
 
-const Model& ChunkMesh::GetVegetationModel() const
+const BlockModel& ChunkMesh::GetVegetationModel() const
 {
 	return m_vegetationModel;
 }
-const Model& ChunkMesh::GetBlocksModel() const
+const BlockModel& ChunkMesh::GetBlocksModel() const
 {
 	return m_blocksModel;
 }
-const Model& ChunkMesh::GetWaterModel() const
+const BlockModel& ChunkMesh::GetWaterModel() const
 {
 	return m_waterModel;
 }
 
-inline Vertex ChunkMesh::MountVertex(const std::vector<GLfloat> &blockFace, const uint8_t& textureIndex,
+inline ChunkVertex ChunkMesh::MountVertex(const std::vector<GLfloat> &blockFace, const uint8_t& textureIndex,
 									 const glm::ivec3& blockPosition, int &i, int &index) const
 {
-	Vertex vertex;
+	ChunkVertex vertex;
 
 	//positions
 	vertex.positions.x = (blockFace[index] + blockPosition.x) * 8;

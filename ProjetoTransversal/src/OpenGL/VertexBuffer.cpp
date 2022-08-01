@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include "VertexBuffer.h"
 #include "Vertex.h"
+#include "Chunk/ChunkVertex.h"
 
 template<typename T>
 void VertexBuffer::SetData(const T* data, unsigned int size)
@@ -32,6 +33,14 @@ void VertexBuffer::SetData<Vertex>(const Vertex* data, unsigned int size)
 	glGenBuffers(1, &m_id);
 	glBindBuffer(GL_ARRAY_BUFFER, m_id);
 	glBufferData(GL_ARRAY_BUFFER, size * sizeof(Vertex), static_cast<const void*>(data), GL_STATIC_DRAW);
+}
+
+template<>
+void VertexBuffer::SetData<ChunkVertex>(const ChunkVertex* data, unsigned int size)
+{
+	glGenBuffers(1, &m_id);
+	glBindBuffer(GL_ARRAY_BUFFER, m_id);
+	glBufferData(GL_ARRAY_BUFFER, size * sizeof(ChunkVertex), static_cast<const void*>(data), GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer()

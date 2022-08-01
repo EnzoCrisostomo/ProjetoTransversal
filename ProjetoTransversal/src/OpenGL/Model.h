@@ -23,3 +23,4 @@ private:
 	VertexArray m_vertexArray;
 
 };
+

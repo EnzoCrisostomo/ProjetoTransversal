@@ -13,7 +13,7 @@ PlayingState::~PlayingState()
     delete m_world;
 }
 
-void PlayingState::Update(double elapsedTime)
+void PlayingState::Update(GLFWwindow* window, double elapsedTime)
 {
     const double tickTime = 2.0;
     static double timeCount = 0.0;

@@ -1,15 +1,24 @@
 #pragma once
-#include <cinttypes>
 
 struct Vertex
 {
 	struct
 	{
-		uint8_t x;
-		uint8_t y;
-		uint8_t z;
+		float x;
+		float y;
+		float z;
 	}positions;
 
-	uint8_t light;
-	uint8_t textureIndex;
+	struct
+	{
+		float u;
+		float v;
+	}textureCoords;
+
+	struct
+	{
+		float r;
+		float g;
+		float b;
+	}color;
 };

@@ -157,6 +157,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\OpenGL\Model.cpp" />
+    <ClCompile Include="src\Renderers\QuadRenderer.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
@@ -165,7 +167,7 @@
     <ClCompile Include="src\Math\VectorXZ.cpp" />
     <ClCompile Include="src\OpenGL\ErrorFinder.cpp" />
     <ClCompile Include="src\OpenGL\IndexBuffer.cpp" />
-    <ClCompile Include="src\OpenGL\Model.cpp" />
+    <ClCompile Include="src\OpenGL\Chunk\BlockModel.cpp" />
     <ClCompile Include="src\OpenGL\Shader.cpp" />
     <ClCompile Include="src\OpenGL\Texture.cpp" />
     <ClCompile Include="src\OpenGL\VertexArray.cpp" />
@@ -191,17 +193,21 @@
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\OpenGL\Mesh.h" />
+    <ClInclude Include="src\OpenGL\Model.h" />
+    <ClInclude Include="src\OpenGL\Vertex.h" />
+    <ClInclude Include="src\Renderers\QuadRenderer.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Math\Ray.h" />
     <ClInclude Include="src\Math\Vectors.h" />
     <ClInclude Include="src\Math\VectorXZ.h" />
     <ClInclude Include="src\OpenGL\ErrorFinder.h" />
     <ClInclude Include="src\OpenGL\IndexBuffer.h" />
-    <ClInclude Include="src\OpenGL\Mesh.h" />
-    <ClInclude Include="src\OpenGL\Model.h" />
+    <ClInclude Include="src\OpenGL\Chunk\BlockMesh.h" />
+    <ClInclude Include="src\OpenGL\Chunk\BlockModel.h" />
     <ClInclude Include="src\OpenGL\Shader.h" />
     <ClInclude Include="src\OpenGL\Texture.h" />
-    <ClInclude Include="src\OpenGL\Vertex.h" />
+    <ClInclude Include="src\OpenGL\Chunk\ChunkVertex.h" />
     <ClInclude Include="src\OpenGL\VertexArray.h" />
     <ClInclude Include="src\OpenGL\VertexBuffer.h" />
     <ClInclude Include="src\OpenGL\VertexBufferLayout.h" />
@@ -229,7 +235,9 @@
   <ItemGroup>
     <Image Include="src\res\AtlasTeste.png" />
     <Image Include="src\res\crosshair.png" />
+    <Image Include="src\res\Gui.png" />
     <Image Include="src\res\ItemBar.png" />
+    <Image Include="src\res\Menu\Jogar.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\Basic.frag" />
@@ -238,6 +246,9 @@
     <None Include="src\shaders\Gui.frag" />
     <None Include="src\shaders\Gui.vert" />
     <None Include="src\shaders\Water.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="src\res\PixelFJVerdana12pt.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

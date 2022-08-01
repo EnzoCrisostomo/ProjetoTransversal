@@ -11,7 +11,7 @@ public:
 
 	~PlayingState();
 
-	void Update(double elapsedTime) override;
+	void Update(GLFWwindow* window, double elapsedTime) override;
 	void UpdateMatrix();
 	void Render(MasterRenderer* renderer) override;
 

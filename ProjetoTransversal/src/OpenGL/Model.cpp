@@ -25,11 +25,11 @@ void Model::SetData(const Mesh& mesh)
 		static_cast<unsigned int>(mesh.vertices.size()));
 
 	//Vertices
-	glVertexAttribIPointer(0, 3, GL_UNSIGNED_BYTE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, positions));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, positions));
 	glEnableVertexAttribArray(0);
-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_BYTE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, light));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, textureCoords));
 	glEnableVertexAttribArray(1);
-	glVertexAttribIPointer(2, 1, GL_UNSIGNED_BYTE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, textureIndex));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
 	glEnableVertexAttribArray(2);
 
 	m_indexBuffer.SetData(mesh.indices.data(),
@@ -50,8 +50,6 @@ GLuint Model::GetIndicesCount() const
 void Model::DeleteData()
 {
 	m_vertices.DeleteData();
-
 	m_indexBuffer.DeleteData();
-	
 	m_vertexArray.DeleteData();
 }

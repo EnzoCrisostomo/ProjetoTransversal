@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenGL/Model.h"
+#include "OpenGL/Chunk/BlockModel.h"
 #include <glm/glm.hpp>
 
 class ChunkMesh
@@ -24,15 +24,15 @@ public:
 
 	void BufferMesh();
 
-	const Model& GetBlocksModel() const;
-	const Model& GetVegetationModel() const;
-	const Model& GetWaterModel() const;
+	const BlockModel& GetBlocksModel() const;
+	const BlockModel& GetVegetationModel() const;
+	const BlockModel& GetWaterModel() const;
 
 	const bool HasVegetation() const { return m_hasVegetation; }
 	const bool HasWater() const { return m_hasWater; }
 
 private:
-	Vertex MountVertex(const std::vector<GLfloat> &blockFace,
+	ChunkVertex MountVertex(const std::vector<GLfloat> &blockFace,
 							  const uint8_t& textureIndex,
 							  const glm::ivec3& blockPosition,
 							  int &i,
@@ -41,16 +41,16 @@ private:
 	bool m_hasVegetation = false;
 	bool m_hasWater = false;
 
-	Mesh m_blocksMesh;
-	Model m_blocksModel;
+	BlockMesh m_blocksMesh;
+	BlockModel m_blocksModel;
 	GLuint m_blocksIndicesCount = 0;
 
-	Mesh m_vegetationMesh;
-	Model m_vegetationModel;
+	BlockMesh m_vegetationMesh;
+	BlockModel m_vegetationModel;
 	GLuint m_vegetationIndicesCount = 0;
 	
-	Mesh m_waterMesh;
-	Model m_waterModel;
+	BlockMesh m_waterMesh;
+	BlockModel m_waterModel;
 	GLuint m_waterIndicesCount = 0;
 };
 

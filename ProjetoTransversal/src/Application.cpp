@@ -10,11 +10,12 @@
 #include <random>
 #include <limits>
 #include <locale>
+#include <iostream>
 
 //temp
 #include <conio.h>
 
-bool shouldUpdateProjMat = false;
+static bool aspectRatioChanged = false;
 
 void ImprimirMenu(std::string mensagem)
 {
@@ -137,7 +138,6 @@ Application::Application(const char* applicationName, int width, int height)
     glEnable(GL_DEPTH_TEST);
 
     glfwSetFramebufferSizeCallback(m_window, WindowResizeCallBack);
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     m_masterRenderer = new MasterRenderer();
 }
@@ -145,7 +145,6 @@ Application::Application(const char* applicationName, int width, int height)
 Application::~Application()
 {
     delete m_masterRenderer;
-    delete m_mainMenuState;
     if(m_playingState)
         delete m_playingState;
     glfwTerminate();
@@ -156,133 +155,41 @@ void Application::runLoop()
 {
     //Main loop
     //==========================================================================================================================//
-    m_mainMenuState = new MainMenuState(this);
-    ImprimirMenu("Digite um número para comecar.");
+    //ImprimirMenu("Digite um número para comecar.");
     while (!glfwWindowShouldClose(m_window))
     {
-        if (m_state == State::Menu)
+        double newFrameTime = glfwGetTime();
+
+        if (m_activeState != nullptr)
         {
-            if (m_playingState)
+            if (aspectRatioChanged)
             {
-                delete m_playingState;
-                m_playingState = nullptr;
-                ImprimirMenu("Digite um número para comecar.");
+                aspectRatioChanged = false;
+                m_masterRenderer->UpdateOrthoProjMatrix();
             }
+            m_activeState->Update(m_window, m_elapsedTime);
+            m_activeState->Render(m_masterRenderer);
+        }
 
-            m_mainMenuState->Update(m_elapsedTime);
-            
-            int tecla = _getch();
-            switch (tecla)
-            {
-            case 49:
-            {
-                std::string nomeMundo = NavegarMundos();
-                if (nomeMundo == "")
-                    break;
-                
-                if (std::filesystem::exists(Options::savePath + nomeMundo + "/"))
-                {
-                    ImprimirMenu("Carregando...");
-                    m_playingState = new PlayingState(this, m_window, nomeMundo);
-                    ChangeState(State::Playing);
-                }
-                else
-                {
-                    ImprimirMenu("O mundo não existe!");
-                }
-                break;
-            }
-            case 50:
-            {
-                ImprimirMenu("Digite o nome do mundo para criar: ");
-                std::string nomeMundo;
-                std::cin >> nomeMundo;
-
-                if (!std::filesystem::exists(Options::savePath + nomeMundo + "/"))
-                {
-                    ImprimirMenu("Criando...");
-                    m_playingState = new PlayingState(this, m_window, nomeMundo);
-                    ChangeState(State::Playing);
-                }
-                else
-                {
-                    ImprimirMenu("O mundo \"" + nomeMundo + "\" já existe!");
-                }
-                break;
-            }
-            case 51:
-            {
-                std::string nomeMundo = NavegarMundos();
-                if (nomeMundo == "")
-                    break;
-
-                ImprimirMenu("Digite um novo nome para " + nomeMundo + " : ");
-                std::string novoNome;
-                std::cin >> novoNome;
-
-                if (std::filesystem::exists(Options::savePath + nomeMundo + "/"))
-                {
-                    std::filesystem::rename((Options::savePath + nomeMundo + "/"), 
-                                            (Options::savePath + novoNome + "/"));
-                    ImprimirMenu(nomeMundo + " renomeado para " + novoNome + ".");
-                }
-                else
-                {
-                    ImprimirMenu("Não foi possivel renomear o mundo.");
-                }
-
-                break;
-            }
-            case 52:
-            {
-                std::string nomeMundo = NavegarMundos();
-                if (nomeMundo == "")
-                    break;
-
-                if (std::filesystem::exists(Options::savePath + nomeMundo + "/"))
-                {
-                    std::filesystem::remove_all(Options::savePath + nomeMundo + "/");
-                    ImprimirMenu(nomeMundo + " Excluído.");
-                }
-                else
-                {
-                    ImprimirMenu("Não foi possivel excluir o mundo.");
-                }
-
-                break;
-            }
-            case 53:
-            {
-                std::cout << "Saindo...\n";
-                glfwSetWindowShouldClose(m_window, true);
-                break;
-            }
-            default:
-            {
-                ImprimirMenu(std::string("Tecla ") + std::to_string(tecla) + std::string(" não é válida!"));
-                break;
-            }
-            }
-            //m_playingState = new PlayingState(this, m_window, testeNome);
-            //m_mainMenuState->Render(m_masterRenderer);
-            glfwPollEvents();
+        /*if (m_state == State::Menu)
+        {
         }
         if (m_state == State::Playing)
         {
-            double newFrameTime = glfwGetTime();
-
-            if (shouldUpdateProjMat)
+            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            if (aspectRatioChanged)
             {
-                shouldUpdateProjMat = false;
+                aspectRatioChanged = false;
                 m_masterRenderer->UpdateOrthoProjMatrix();
                 m_playingState->UpdateMatrix();
             }
             m_playingState->Update(m_elapsedTime);
             m_playingState->Render(m_masterRenderer);
-            glfwSwapBuffers(m_window);
-            glfwPollEvents();
-            m_elapsedTime = glfwGetTime() - newFrameTime;
-        }
+        }*/
+
+        glfwSwapBuffers(m_window);
+        glfwPollEvents();
+        m_elapsedTime = glfwGetTime() - newFrameTime;
 
         /*double fps = 1.0 / m_elapsedTime;
         while (fps > 5)
@@ -303,6 +210,7 @@ void Application::setup()
         std::filesystem::create_directory(Options::dataPath);
         std::filesystem::create_directory(Options::savePath);
     }
+    m_activeState = std::make_unique<MainMenuState>(this);
 }
 
 void Application::ChangeState(State state)
@@ -312,7 +220,7 @@ void Application::ChangeState(State state)
 
 void WindowResizeCallBack(GLFWwindow* window, int width, int height)
 {
-    shouldUpdateProjMat = true;
+    aspectRatioChanged = true;
     Options::windowWidth = (float)width;
     Options::windowHeight = (float)height;
     glViewport(0, 0, width, height);

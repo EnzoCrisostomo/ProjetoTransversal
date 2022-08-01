@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
-#include "Vertex.h"
+#include "ChunkVertex.h"
 
-struct Mesh
+struct BlockMesh
 {
-	std::vector<unsigned int>  indices;
-	std::vector<Vertex>  vertices;
+	std::vector<GLuint>  indices;
+	std::vector<ChunkVertex>  vertices;
 
-	void Free()
+	void Free() 
 	{
 		indices.clear();
 		vertices.clear();
