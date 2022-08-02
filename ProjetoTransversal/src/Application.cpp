@@ -128,7 +128,6 @@ Application::Application(const char* applicationName, int width, int height)
         throw std::runtime_error("Couldn't create glfwWindow.");
     }
     glfwMakeContextCurrent(m_window);
-    glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {

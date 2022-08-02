@@ -8,6 +8,11 @@
 //	m_wireframeRenderer.AddToQueue(position);
 //}
 
+void MasterRenderer::DrawQuad(const glm::vec2& position, const float size, const float aspectRatio, const glm::vec2 textureCoords, const float textureOffset)
+{
+	m_quadRenderer.AddQuad(position, size, aspectRatio, textureCoords, textureOffset);
+}
+
 void MasterRenderer::DrawChunk(Chunk* chunk)
 {
 	m_chunkRenderer.AddToQueue(chunk);
@@ -17,7 +22,9 @@ void MasterRenderer::renderMenu()
 {
 	glClearColor(0.40f, 0.80f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	m_quadRenderer.RenderQuads();
+
 	glCheckError();
 }
 

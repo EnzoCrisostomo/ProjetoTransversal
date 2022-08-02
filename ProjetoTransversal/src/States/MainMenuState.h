@@ -11,5 +11,6 @@ public:
 	void Render(MasterRenderer* renderer) override;
 
 private:
-
+	bool m_mousePressed = false;
+	double m_mouseX = 0, m_mouseY = 0;
 };

@@ -11,12 +11,16 @@ public:
 
 	void RenderQuads();
 	void CreateProjectionMatrix();
-private:
 	void AddQuad(const glm::vec2& position, const float size = 1.f,
 				 const float aspectRatio = 1.f, const glm::vec2 textureCoords = { 0.f, 0.f },
 				 const float textureOffset = 1.f);
-	Model m_model;
-	Mesh m_mesh;
+private:
+
+	std::vector<Vertex> m_vertexData;
+
+	VertexBuffer m_vertexBuffer;
+	IndexBuffer m_indexBuffer;
+	VertexArray m_vertexArray;
 	unsigned int m_indicesCount;
 
 	Shader m_shader;
