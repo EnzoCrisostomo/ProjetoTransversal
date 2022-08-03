@@ -61,12 +61,12 @@ void QuadRenderer::RenderQuads()
     m_indicesCount = 0;
 }
 
-void QuadRenderer::AddQuad( const glm::vec2& position, const float size,
-                            const float aspectRatio, const glm::vec2 textureCoords,
+void QuadRenderer::AddQuad( const glm::vec2& position, const glm::vec2& dimensions,
+                            const float scale, const glm::vec2& textureCoords,
                             const float textureOffset)
 {
-    float numX = size * aspectRatio / 2.f;
-    float numY = size / 2.f;
+    float numX = (scale * dimensions.x) / 2.f;
+    float numY = (scale * dimensions.y) / 2.f;
     Vertex vertice = { 
         {position.x - numX, position.y - numY, 0.f},
         {textureCoords.x, textureCoords.y},

@@ -11,8 +11,8 @@ public:
 
 	void RenderQuads();
 	void CreateProjectionMatrix();
-	void AddQuad(const glm::vec2& position, const float size = 1.f,
-				 const float aspectRatio = 1.f, const glm::vec2 textureCoords = { 0.f, 0.f },
+	void AddQuad(const glm::vec2& position, const glm::vec2& dimensions,
+				 const float scale = 1.f, const glm::vec2& textureCoords = { 0.f, 0.f },
 				 const float textureOffset = 1.f);
 private:
 

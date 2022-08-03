@@ -8,9 +8,10 @@
 //	m_wireframeRenderer.AddToQueue(position);
 //}
 
-void MasterRenderer::DrawQuad(const glm::vec2& position, const float size, const float aspectRatio, const glm::vec2 textureCoords, const float textureOffset)
+void MasterRenderer::DrawQuad(const glm::vec2& position, const glm::vec2& dimensions, 
+	const float scale, const glm::vec2& textureCoords, const float textureOffset)
 {
-	m_quadRenderer.AddQuad(position, size, aspectRatio, textureCoords, textureOffset);
+	m_quadRenderer.AddQuad(position, dimensions, scale, textureCoords, textureOffset);
 }
 
 void MasterRenderer::DrawChunk(Chunk* chunk)

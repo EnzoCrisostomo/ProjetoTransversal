@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\States\MenuButton.cpp" />
     <ClCompile Include="src\OpenGL\Model.cpp" />
     <ClCompile Include="src\Renderers\QuadRenderer.cpp" />
     <ClCompile Include="src\Application.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\States\MenuButton.h" />
     <ClInclude Include="src\OpenGL\Mesh.h" />
     <ClInclude Include="src\OpenGL\Model.h" />
     <ClInclude Include="src\OpenGL\Vertex.h" />

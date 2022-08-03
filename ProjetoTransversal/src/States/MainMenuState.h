@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseState.h"
+#include "MenuButton.h"
+#include <vector>
 
 class MainMenuState : public BaseState
 {
@@ -11,6 +13,14 @@ public:
 	void Render(MasterRenderer* renderer) override;
 
 private:
+	std::vector<MenuButton> m_buttons;
+
 	bool m_mousePressed = false;
 	double m_mouseX = 0, m_mouseY = 0;
+
+	//Button functions
+
+	void Jogar();
+	void Config();
+	void Sair();
 };
