@@ -8,8 +8,9 @@ MainMenuState::MainMenuState(Application* app)
 {
 	glfwSwapInterval(1);
 
-	m_buttons.emplace_back(glm::vec2{ 0.f, 35.f }, glm::vec2{ 512.f, 64.f });
-	m_buttons.emplace_back(glm::vec2{ 0.f, -35.f }, glm::vec2{ 512.f, 64.f });
+	m_buttons.emplace_back(glm::vec2{ 0.f, 35.f }, glm::vec2{ 512.f, 64.f }, &MainMenuState::Jogar);
+	m_buttons.emplace_back(glm::vec2{ 0.f, -35.f }, glm::vec2{ 512.f, 64.f }, &MainMenuState::Config);
+	m_buttons.emplace_back(glm::vec2{ 0.f, -105.f }, glm::vec2{ 512.f, 64.f }, &MainMenuState::Sair);
 }
 
 MainMenuState::~MainMenuState()
@@ -21,14 +22,13 @@ void MainMenuState::Update(GLFWwindow* window, double elapsedTime)
 {
 	glfwGetCursorPos(window, &m_mouseX, &m_mouseY);
 	m_mousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
-	std::cout << "x[" << m_mouseX << "], [" << m_mouseY << "] --> " << m_mousePressed <<"\n";
 
 	if(m_mousePressed)
 		for (auto& button : m_buttons)
 		{
 			if (button.IsHovered(m_mouseX, m_mouseY))
 			{
-				std::cout << "DISGRAÇA";
+				(this->*button.m_function)();
 			}
 		}
 }
@@ -47,12 +47,15 @@ void MainMenuState::Render(MasterRenderer* renderer)
 
 void MainMenuState::Jogar()
 {
+	std::cout << "Jogar!\n";
 }
 
 void MainMenuState::Config()
 {
+	std::cout << "Config!\n";
 }
 
 void MainMenuState::Sair()
 {
+	std::cout << "Sair!\n";
 }
