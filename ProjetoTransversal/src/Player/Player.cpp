@@ -16,12 +16,11 @@ namespace
 	constexpr double tolerance = 0.000001;
 }
 
-Player::Player(GLFWwindow* window, PlayingState* state)
+Player::Player(GLFWwindow* window)
 	: m_speed			(Options::playerSpeed),
 	  m_gamemode		(Options::playerGamemode),
 	  m_elapsedTime		(0.0),
 	  m_isGrounded		(false),
-	  m_state			(state),
 
 	  m_position		(glm::dvec3( 0.0,  0.0,  0.0 )),
 	  m_cameraFront		(glm::dvec3( 0.0,  0.0, -1.0 )),
@@ -247,7 +246,7 @@ glm::dvec3 Player::HandleKeyboardInput()
 	glm::dvec3 direction = { 0.0, 0.0, 0.0 };
 
 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		m_state->LeaveState();
+		m_shouldPause = true;
 
 	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
 		direction.x++;

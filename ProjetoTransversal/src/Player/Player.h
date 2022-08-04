@@ -6,7 +6,6 @@
 #include <GLFW/glfw3.h>
 
 class World;
-class PlayingState;
 
 struct Dimensions
 {
@@ -25,7 +24,7 @@ struct Dimensions
 class Player
 {
 public:
-	Player(GLFWwindow* window, PlayingState* state);
+	Player(GLFWwindow* window);
 
 	void Update(World* world, double elapsedTime);
 	void SetWindow(GLFWwindow* window);
@@ -45,6 +44,7 @@ public:
 	const glm::dvec3& GetCameraFront() const { return m_cameraFront; }
 	const Dimensions& GetDimensions() const { return m_dimensions; }
 
+	bool m_shouldPause = false;
 private:
 	void PlaceAndBreakBlocks(World* world);
 	bool CollidingWithBlock(const glm::ivec3 blockPos) const;
@@ -52,12 +52,12 @@ private:
 	void NewCollisionDetect(World* world, glm::dvec3 velocity);
 
 	GLFWwindow* m_window;
-	PlayingState* m_state;
 
 	double m_elapsedTime;
 	float m_speed;
 	bool m_isGrounded;
 	int m_gamemode;
+
 
 	glm::dvec3 m_cameraFront;
 	glm::dvec3 m_cameraUp;
