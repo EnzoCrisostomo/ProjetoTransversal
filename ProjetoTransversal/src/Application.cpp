@@ -144,6 +144,8 @@ Application::Application(const char* applicationName, int width, int height)
 Application::~Application()
 {
     delete m_masterRenderer;
+    if(m_playingState)
+        delete m_playingState;
     glfwTerminate();
 }
 

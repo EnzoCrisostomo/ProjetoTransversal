@@ -1,15 +1,24 @@
 #pragma once
-#include <string>
+#include "BaseState.h"
+#include "Player/Player.h"
 
-struct GLFWwindow;
-class MasterRenderer;
+class World;
 
-namespace PlayingState
+class PlayingState : BaseState
 {
-	void EnterState(GLFWwindow* window, std::string worldName);
-	void Update(GLFWwindow* window, double elapsedTime);
-	void Render(MasterRenderer* renderer);
+public:
+	PlayingState(Application* app, GLFWwindow* window, std::string worldName);
+
+	~PlayingState();
+
+	void Update(GLFWwindow* window, double elapsedTime) override;
+	void UpdateMatrix();
+	void Render(MasterRenderer* renderer) override;
+
 	void LeaveState();
 
-	void UpdateMatrix();
+private:
+	World* m_world;
+	Player m_player;
+	GLFWwindow* m_window;
 };

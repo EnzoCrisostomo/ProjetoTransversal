@@ -1,7 +1,10 @@
 #pragma once
 #include "Renderers/MasterRenderer.h"
+#include "States/BaseState.h"
 #include <memory>
 #include <GLFW/glfw3.h>
+
+class PlayingState;
 
 enum class State : uint8_t
 {
@@ -21,6 +24,9 @@ public:
 	void ChangeState(State state);
 private:
 	MasterRenderer* m_masterRenderer = nullptr;
+
+	PlayingState* m_playingState = nullptr;
+	std::unique_ptr<BaseState> m_activeState = nullptr;
 
 	GLFWwindow* m_window = nullptr;
 	int m_heigth, m_width;

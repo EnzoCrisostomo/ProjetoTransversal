@@ -3,7 +3,7 @@
 
 MenuButton::MenuButton( const glm::vec2& position,
 						const glm::vec2& dimensions,
-						void(*function)(),
+						void(MainMenuState::* function)(),
 						const std::string& text,
 						const std::string& bgTexturePath,
 						const float scale)
