@@ -157,7 +157,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\States\MenuButton.cpp" />
     <ClCompile Include="src\OpenGL\Model.cpp" />
     <ClCompile Include="src\Renderers\QuadRenderer.cpp" />
     <ClCompile Include="src\Application.cpp" />
