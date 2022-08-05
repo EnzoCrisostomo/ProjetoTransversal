@@ -219,6 +219,7 @@
     <ClInclude Include="src\Renderers\GuiRenderer.h" />
     <ClInclude Include="src\Renderers\MasterRenderer.h" />
     <ClInclude Include="src\Renderers\WireFrameRenderer.h" />
+    <ClInclude Include="src\States\BaseState.h" />
     <ClInclude Include="src\States\MainMenuState.h" />
     <ClInclude Include="src\States\PlayingState.h" />
     <ClInclude Include="src\World\Block\Block.h" />
