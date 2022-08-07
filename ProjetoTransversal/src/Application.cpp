@@ -47,7 +47,9 @@ Application::Application(const char* applicationName, int width, int height)
 
 Application::~Application()
 {
-    delete m_activeState;
+    if(m_activeState)
+        delete m_activeState;
+
     delete m_masterRenderer;
     glfwTerminate();
 }
@@ -57,10 +59,8 @@ void Application::runLoop()
 {
     //Main loop
     //==========================================================================================================================//
-    while (!glfwWindowShouldClose(m_window))
+    while (!glfwWindowShouldClose(m_window) && !m_hasToClose)
     {
-        if (m_activeState == nullptr)
-            return;
 
         double newFrameTime = glfwGetTime();
 
@@ -86,6 +86,18 @@ void Application::setup()
 
 void Application::ChangeState(BaseState* state)
 {
+    if (state == nullptr)
+    {
+        m_hasToClose = true;
+        return;
+    }
+
+    DeleteActiveState();
+    m_activeState = state;
+}
+
+void Application::DeleteActiveState()
+{
     auto* menuState = dynamic_cast<MainMenuState*>(m_activeState);
     if (menuState)
     {
@@ -96,7 +108,6 @@ void Application::ChangeState(BaseState* state)
     {
         delete playingState;
     }
-    m_activeState = state;
 }
 
 void WindowResizeCallBack(GLFWwindow* window, int width, int height)

@@ -15,10 +15,13 @@ public:
 	void setup();
 	void ChangeState(BaseState* state);
 private:
+	void DeleteActiveState();
+
 	MasterRenderer* m_masterRenderer = nullptr;
 	BaseState* m_activeState = nullptr;
 
 	GLFWwindow* m_window = nullptr;
 	int m_heigth, m_width;
 	double m_elapsedTime;
+	bool m_hasToClose = false;
 };

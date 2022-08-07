@@ -35,7 +35,7 @@ void MainMenuState::Render(MasterRenderer* renderer)
 {
 	for (auto& button : m_buttons)
 	{
-		renderer->DrawQuad(button.m_position, button.m_dimensions);
+		renderer->DrawQuad(button.GetPosition(), button.GetDimensions());
 	}
 	//renderer->DrawQuad({ 0.f, 35.f }, 60.f, 512.f / 64.f);
 	//renderer->DrawQuad({ 0.f, -35.f }, 60.f, 512.f / 64.f);
@@ -61,4 +61,5 @@ void MainMenuState::Config()
 void MainMenuState::Sair()
 {
 	std::cout << "Sair!\n";
+	m_application->ChangeState(nullptr);
 }

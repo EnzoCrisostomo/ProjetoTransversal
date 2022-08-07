@@ -27,10 +27,13 @@ public:
 
 	void Update(const double& mouseX, const double& mouseY, const bool& click)
 	{
-		bool hovered = IsHovered(mouseX, mouseY);
-		if (hovered && click)
+		m_hovered = IsHovered(mouseX, mouseY);
+		if (m_hovered && click)
 			(m_parent->*m_function)();
 	}
+
+	const glm::vec2 GetPosition() const { return m_position; }
+	const glm::vec2 GetDimensions() const { return m_dimensions * (1.f + m_hovered * 0.05f); }
 
 private:
 	bool IsHovered(const double& mouseX, const double& mouseY)
@@ -43,7 +46,6 @@ private:
 		return (mouseX > minX && mouseX < maxX) && (mouseY > minY && mouseY < maxY);
 	}
 
-public:
 	glm::vec2 m_position;
 	glm::vec2 m_dimensions;
 	ParentType* m_parent;
@@ -51,5 +53,7 @@ public:
 	std::string m_text;
 	std::string m_bgTexturePath;
 	float m_scale = 1.0f;
+
+	bool m_hovered = false;
 };
 
