@@ -1,16 +1,18 @@
-#include "MainMenuState.h"
+#include "States.h"
 #include "Renderers/MasterRenderer.h"
+#include "Application.h"
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-MainMenuState::MainMenuState(Application* app)
-	: BaseState(app)
+MainMenuState::MainMenuState(Application* app, GLFWwindow* window)
+	: BaseState(app, window)
 {
 	glfwSwapInterval(1);
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-	m_buttons.emplace_back(glm::vec2{ 0.f, 35.f }, glm::vec2{ 512.f, 64.f }, &MainMenuState::Jogar);
-	m_buttons.emplace_back(glm::vec2{ 0.f, -35.f }, glm::vec2{ 512.f, 64.f }, &MainMenuState::Config);
-	m_buttons.emplace_back(glm::vec2{ 0.f, -105.f }, glm::vec2{ 512.f, 64.f }, &MainMenuState::Sair);
+	m_buttons.emplace_back(glm::vec2{ 0.f, 35.f }, glm::vec2{ 512.f, 64.f }, this, &MainMenuState::Jogar);
+	m_buttons.emplace_back(glm::vec2{ 0.f, -35.f }, glm::vec2{ 512.f, 64.f }, this, &MainMenuState::Config);
+	m_buttons.emplace_back(glm::vec2{ 0.f, -105.f }, glm::vec2{ 512.f, 64.f }, this, &MainMenuState::Sair);
 }
 
 MainMenuState::~MainMenuState()
@@ -18,19 +20,15 @@ MainMenuState::~MainMenuState()
 }
 
 bool rs;
-void MainMenuState::Update(GLFWwindow* window, double elapsedTime)
+void MainMenuState::Update(double elapsedTime)
 {
-	glfwGetCursorPos(window, &m_mouseX, &m_mouseY);
-	m_mousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
+	glfwGetCursorPos(m_window, &m_mouseX, &m_mouseY);
+	m_mousePressed = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
 
-	if(m_mousePressed)
-		for (auto& button : m_buttons)
-		{
-			if (button.IsHovered(m_mouseX, m_mouseY))
-			{
-				(this->*button.m_function)();
-			}
-		}
+	for (auto& button : m_buttons)
+	{
+		button.Update(m_mouseX, m_mouseY, m_mousePressed);
+	}
 }
 
 void MainMenuState::Render(MasterRenderer* renderer)
@@ -45,9 +43,14 @@ void MainMenuState::Render(MasterRenderer* renderer)
 	renderer->renderMenu();
 }
 
+
 void MainMenuState::Jogar()
 {
 	std::cout << "Jogar!\n";
+
+	PlayingState* newState = new PlayingState(m_application, m_window, "teste");
+
+	m_application->ChangeState(static_cast<BaseState*>(newState));
 }
 
 void MainMenuState::Config()

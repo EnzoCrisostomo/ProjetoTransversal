@@ -3,7 +3,6 @@
 #include "Options/Options.h"
 #include "Math/Ray.h"
 #include "States/PlayingState.h"
-
 #include <iostream>
 #include <iomanip>
 
@@ -16,12 +15,11 @@ namespace
 	constexpr double tolerance = 0.000001;
 }
 
-Player::Player(GLFWwindow* window, PlayingState* state)
+Player::Player()
 	: m_speed			(Options::playerSpeed),
 	  m_gamemode		(Options::playerGamemode),
 	  m_elapsedTime		(0.0),
 	  m_isGrounded		(false),
-	  m_state			(state),
 
 	  m_position		(glm::dvec3( 0.0,  0.0,  0.0 )),
 	  m_cameraFront		(glm::dvec3( 0.0,  0.0, -1.0 )),
@@ -36,7 +34,6 @@ Player::Player(GLFWwindow* window, PlayingState* state)
 	  m_viewMatrix		(glm::dmat4(1))
 {
 	CreateProjectionMatrix();
-	SetWindow(window);
 }
 
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
@@ -58,31 +55,16 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	//std::cout << "Y: [" << yoffset << "] X: [" << xoffset << "]\n";
 }
 
-void Player::Update(World* world, double elapsedTime)
+void Player::Update(World* world, GLFWwindow* window, double elapsedTime)
 {
-	//std::cout << "CameraPlayer Update: [" << cameraPlayerX << "],[" << cameraPlayerY << "],[" << cameraPlayerZ << "].\n";
 	m_elapsedTime = elapsedTime;
 
-	HandleMouseInput();
-	PlaceAndBreakBlocks(world);
-	glm::dvec3 direction = HandleKeyboardInput();
+	HandleMouseInput(window);
+	PlaceAndBreakBlocks(window, world);
+	glm::dvec3 direction = HandleKeyboardInput(window);
 	HandleMovement(world, direction);
-
-	//if(Options::teste)
-	//	std::cout << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
-	//std::cout << std::setprecision(4) << "Position: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
-	//std::cout << "Velocity: x[" << m_velocity.x << "] y[" << m_velocity.y << "] z[" << m_velocity.z << "]\n";
-	//std::cout << "Acceleration: x[" << m_acceleration.x << "] y[" << m_acceleration.y << "] z[" << m_acceleration.z << "]\n";
 }
 
-void Player::SetWindow(GLFWwindow* window)
-{
-	if (window)
-	{
-		m_window = window;
-		glfwSetScrollCallback(window, scrollCallback);
-	}
-}
 
 void Player::SetPosition(glm::dvec3 newPos)
 {
@@ -95,13 +77,13 @@ void Player::SetCamera(glm::dvec3 newPos)
 	m_viewMatrix = glm::lookAt(m_position, m_position + m_cameraFront, m_cameraUp);
 }
 
-const bool Player::WillBreakBlock() const
+const bool Player::WillBreakBlock(GLFWwindow* window) const
 {
 	static double oldTime = glfwGetTime();
 	static bool holdingMouse = false;
 
 	double now = glfwGetTime();
-	bool mousePressed = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+	bool mousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 
 	if (mousePressed && (oldTime - now < -0.3 || !holdingMouse))
 	{
@@ -113,13 +95,13 @@ const bool Player::WillBreakBlock() const
 	return false;
 }
 
-const bool Player::WillPlaceBlock() const
+const bool Player::WillPlaceBlock(GLFWwindow* window) const
 {
 	static double oldTime = glfwGetTime();
 	static bool holdingMouse = false;
 
 	double now = glfwGetTime();
-	bool mousePressed = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+	bool mousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 
 	if (mousePressed && (oldTime - now < -0.2 || !holdingMouse))
 	{
@@ -131,13 +113,13 @@ const bool Player::WillPlaceBlock() const
 	return false;
 }
 
-const bool Player::WillGetBlock(BlockId block) const
+const bool Player::WillGetBlock(GLFWwindow* window, BlockId block) const
 {
 	static double oldTime = glfwGetTime();
 	static bool holdingMouse = false;
 
 	double now = glfwGetTime();
-	bool mousePressed = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
+	bool mousePressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
 
 	if (mousePressed && (oldTime - now < -0.2 || !holdingMouse))
 	{
@@ -150,13 +132,13 @@ const bool Player::WillGetBlock(BlockId block) const
 	return false;
 }
 
-const bool Player::Pular() const
+const bool Player::Pular(GLFWwindow* window) const
 {
 	static double oldTime = glfwGetTime();
 	static bool holdingSpace = false;
 
 	double now = glfwGetTime();
-	bool spacePressed = glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS;
+	bool spacePressed = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
 	if (spacePressed && (oldTime - now < -0.4 || !holdingSpace) && m_isGrounded)
 	{
@@ -242,28 +224,25 @@ void Player::HandleMovement(World* world, glm::dvec3 direction)
 		m_velocity.y = -100.0;
 }
 
-glm::dvec3 Player::HandleKeyboardInput()
+glm::dvec3 Player::HandleKeyboardInput(GLFWwindow* window)
 {
 	glm::dvec3 direction = { 0.0, 0.0, 0.0 };
 
-	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		m_state->LeaveState();
-
-	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		direction.x++;
-	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		direction.x--;
-	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		direction.z++;
-	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		direction.z--;
 	if(direction != glm::dvec3{0.0, 0.0, 0.0})
 		direction = glm::normalize(direction);
-	if (glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 		direction *= 2.0;
 	if (m_gamemode == 0)
 	{
-		if (Pular())
+		if (Pular(window))
 		{
 			m_isGrounded = false;
 			direction.y += 25.0;
@@ -272,13 +251,13 @@ glm::dvec3 Player::HandleKeyboardInput()
 	}
 	else
 	{
-		if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 			direction.y++;
-		if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 			direction.y--;
 	}
 	static bool temp = true;
-	if (glfwGetKey(m_window, GLFW_KEY_F1) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 	{
 		if (temp)
 		{
@@ -296,7 +275,7 @@ glm::dvec3 Player::HandleKeyboardInput()
 
 	// @teste
 	static bool teste = true;
-	if (glfwGetKey(m_window, GLFW_KEY_H) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
 	{
 		if (teste)
 			Options::teste = !Options::teste;
@@ -308,7 +287,7 @@ glm::dvec3 Player::HandleKeyboardInput()
 	return direction;
 }
 
-void Player::PlaceAndBreakBlocks(World* world)
+void Player::PlaceAndBreakBlocks(GLFWwindow* window, World* world)
 {
 	glm::vec3 lastRayPos = Floor(GetPosition());
 	for (Ray ray(GetPosition(), GetCameraFront()); ray.GetLenght() < 10; ray.Step(0.01))
@@ -319,12 +298,12 @@ void Player::PlaceAndBreakBlocks(World* world)
 		if (blockData.IsSolid())
 		{
 			//m_gizmo = blockPos;
-			if (!WillGetBlock(blockId)) {
-				if (WillBreakBlock())
+			if (!WillGetBlock(window, blockId)) {
+				if (WillBreakBlock(window))
 				{
 					world->SetBlock(blockPos, BlockId::Air);
 				}
-				if (WillPlaceBlock())
+				if (WillPlaceBlock(window))
 				{
 					if (!CollidingWithBlock(Floor(lastRayPos)) || !BlockDatabase::Get().GetBlockInfo(getBlockHoldingId()).IsSolid()) {
 						world->SetBlock(Floor(lastRayPos), getBlockHoldingId());
@@ -443,7 +422,7 @@ void Player::CheckCollision(World* world, const glm::dvec3 vel)
 }
 
 
-void Player::HandleMouseInput()
+void Player::HandleMouseInput(GLFWwindow* window)
 {
 	static double yaw = -90.0;
 	static double pitch = 0.0;
@@ -452,7 +431,7 @@ void Player::HandleMouseInput()
 	static double lastY = 0;
 
 	double xPos, yPos;
-	glfwGetCursorPos(m_window, &xPos, &yPos);
+	glfwGetCursorPos(window, &xPos, &yPos);
 
 	double xOffset = xPos - lastX;
 	double yOffset = lastY - yPos;

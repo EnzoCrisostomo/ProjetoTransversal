@@ -1,10 +1,12 @@
-#include "PlayingState.h"
+#include "States.h"
 #include "World/World.h"
 #include "Application.h"
 
 PlayingState::PlayingState(Application* app, GLFWwindow* window, std::string worldName)
-	: BaseState(app), m_window(window), m_player(window, this)
+	: BaseState(app, window), m_player()
 {
+    glfwSwapInterval(0);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     m_world = new World(m_player, worldName);
 }
 
@@ -13,12 +15,13 @@ PlayingState::~PlayingState()
     delete m_world;
 }
 
-void PlayingState::Update(GLFWwindow* window, double elapsedTime)
+void PlayingState::Update(double elapsedTime)
 {
     const double tickTime = 2.0;
     static double timeCount = 0.0;
     timeCount += elapsedTime;
-    m_player.Update(m_world, elapsedTime);
+
+    m_player.Update(m_world, m_window, elapsedTime);
 
     m_world->UpdateWorld(m_player);
     if (timeCount > tickTime)
@@ -34,20 +37,19 @@ void PlayingState::Update(GLFWwindow* window, double elapsedTime)
             value = 0;
         block = (BlockId)value;*/
     }
-}
 
-void PlayingState::UpdateMatrix()
-{
-    m_player.CreateProjectionMatrix();
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        m_application->ChangeState(new MainMenuState(m_application, m_window));
 }
 
 void PlayingState::Render(MasterRenderer* renderer)
 {
+    m_player.CreateProjectionMatrix();
     m_world->RenderWorld(renderer, m_player.GetPosition());
     renderer->finishRender(m_player);
 }
 
 void PlayingState::LeaveState()
 {
-    m_application->ChangeState(State::Menu);
+    m_application->ChangeState(nullptr);
 }

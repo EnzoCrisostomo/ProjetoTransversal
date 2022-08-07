@@ -25,17 +25,11 @@ struct Dimensions
 class Player
 {
 public:
-	Player(GLFWwindow* window, PlayingState* state);
+	Player();
 
-	void Update(World* world, double elapsedTime);
-	void SetWindow(GLFWwindow* window);
+	void Update(World* world, GLFWwindow* window, double elapsedTime);
 	void SetPosition(glm::dvec3 newPos);
 	void SetCamera(glm::dvec3 newPos);
-
-	const bool WillBreakBlock() const;
-	const bool WillPlaceBlock() const;
-	const bool WillGetBlock(BlockId block) const;
-	const BlockId getBlockHoldingId() const;
 
 
 	void CreateProjectionMatrix();
@@ -46,13 +40,10 @@ public:
 	const Dimensions& GetDimensions() const { return m_dimensions; }
 
 private:
-	void PlaceAndBreakBlocks(World* world);
+	void PlaceAndBreakBlocks(GLFWwindow* window, World* world);
 	bool CollidingWithBlock(const glm::ivec3 blockPos) const;
 	void CheckCollision(World* world, const glm::dvec3 vel);
 	void NewCollisionDetect(World* world, glm::dvec3 velocity);
-
-	GLFWwindow* m_window;
-	PlayingState* m_state;
 
 	double m_elapsedTime;
 	float m_speed;
@@ -72,8 +63,12 @@ private:
 	glm::dmat4 m_projectionMatrixZoom;
 	glm::dmat4 m_viewMatrix;
 
-	const bool Pular() const;
-	glm::dvec3 HandleKeyboardInput();
-	void HandleMouseInput();
+	const bool Pular(GLFWwindow* window) const;
+	glm::dvec3 HandleKeyboardInput(GLFWwindow* window);
+	void HandleMouseInput(GLFWwindow* window);
 	void HandleMovement(World* world, glm::dvec3 direction);
+	const bool WillBreakBlock(GLFWwindow* window) const;
+	const bool WillPlaceBlock(GLFWwindow* window) const;
+	const bool WillGetBlock(GLFWwindow* window, BlockId block) const;
+	const BlockId getBlockHoldingId() const;
 };

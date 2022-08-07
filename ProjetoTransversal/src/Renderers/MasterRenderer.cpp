@@ -21,6 +21,9 @@ void MasterRenderer::DrawChunk(Chunk* chunk)
 
 void MasterRenderer::renderMenu()
 {
+	//temp
+	m_quadRenderer.CreateProjectionMatrix();
+
 	glClearColor(0.40f, 0.80f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -31,16 +34,13 @@ void MasterRenderer::renderMenu()
 
 void MasterRenderer::finishRender(const Player& player)
 {
+	//temp
+	m_quadRenderer.CreateProjectionMatrix();
+
 	glClearColor(0.40f, 0.80f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_chunkRenderer.RenderChunks(player);
 	//m_guiRenderer.RenderGui();
 	//m_wireframeRenderer.RenderWireframe(player);
 	glCheckError();
-}
-
-void MasterRenderer::UpdateOrthoProjMatrix()
-{
-	//m_guiRenderer.CreateProjectionMatrix();
-	m_quadRenderer.CreateProjectionMatrix();
 }

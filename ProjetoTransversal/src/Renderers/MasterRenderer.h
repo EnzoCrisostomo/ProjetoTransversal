@@ -20,7 +20,7 @@ public:
 	void DrawChunk(Chunk* chunk);
 	void renderMenu();
 	void finishRender(const Player& player);
-	void UpdateOrthoProjMatrix();
+
 private:
 	//WireframeRenderer m_wireframeRenderer;
 	ChunkRenderer m_chunkRenderer;
