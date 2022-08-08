@@ -1,7 +1,5 @@
 #include <glad/glad.h>
 
-#include "States/PlayingState.h"
-#include "States/MainMenuState.h"
 #include "Application.h"
 #include "Options/Options.h"
 
@@ -92,22 +90,8 @@ void Application::ChangeState(BaseState* state)
         return;
     }
 
-    DeleteActiveState();
+    delete m_activeState;
     m_activeState = state;
-}
-
-void Application::DeleteActiveState()
-{
-    auto* menuState = dynamic_cast<MainMenuState*>(m_activeState);
-    if (menuState)
-    {
-        delete menuState;
-    }
-    auto* playingState = dynamic_cast<PlayingState*>(m_activeState);
-    if (playingState)
-    {
-        delete playingState;
-    }
 }
 
 void WindowResizeCallBack(GLFWwindow* window, int width, int height)

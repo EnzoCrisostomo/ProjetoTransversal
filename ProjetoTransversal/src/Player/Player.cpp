@@ -2,7 +2,6 @@
 #include "Player.h"
 #include "Options/Options.h"
 #include "Math/Ray.h"
-#include "States/PlayingState.h"
 #include <iostream>
 #include <iomanip>
 
@@ -11,8 +10,8 @@ bool temp_pulou = false;
 
 namespace 
 {
-	BlockId selectedBlock = BlockId::DarkPlanks;
-	constexpr double tolerance = 0.000001;
+	static BlockId selectedBlock = BlockId::DarkPlanks;
+	static constexpr double tolerance = 0.000001;
 }
 
 Player::Player()
@@ -200,8 +199,8 @@ void Player::HandleMovement(World* world, glm::dvec3 direction)
 	if (m_gamemode != 2)
 		CheckCollision(world, { 0, 0, correctedVelocity.z });
 
-	if (m_position.y <= -128.0)
-		m_position.y = 255.0;
+	if (m_position.y <= -20.0)
+		m_position.y = 300.0;
 
 
 	//TODO ajeitar desacelera��o do player dependente do FPS
@@ -370,20 +369,6 @@ void Player::CheckCollision(World* world, const glm::dvec3 vel)
 
 		auto rs = BlockDatabase::Get().GetBlockInfo(bloco);
 		auto temp = m_position;
-		/*std::cout << "======================================================\n";
-		if (rs.GetName() == "DarkPlanks")
-		{
-			std::cout << "!!!: " << '\n';
-		}
-		std::cout << rs.GetName() << '\n';
-		std::cout << "Iteration: " << iter << '\n';
-		std::cout << "OldPos: x[" << temp.x << "] y[" << temp.y << "] z[" << temp.z << "]\n";
-		std::cout << "vars: x[" << x << "] y[" << y << "] z[" << z << "]\n";
-		std::cout << "BlockPos: x[" << blockPos.x << "] y[" << blockPos.y << "] z[" << blockPos.z << "]\n";
-		std::cout << "Calc: x[" << m_position.x - m_dimensions.x << "] y[" << m_position.y - m_dimensions.y << "] z[" << m_position.z - m_dimensions.z << "]\n";
-		std::cout << "VEL: x[" << vel.x << "] y[" << vel.y << "] z[" << vel.z << "]\n";
-		std::cout << "NewPos: x[" << m_position.x << "] y[" << m_position.y << "] z[" << m_position.z << "]\n";
-		std::cout << "======================================================\n";*/
 
 		if (bloco == BlockId::Air)
 			continue;

@@ -14,9 +14,8 @@ public:
 	void runLoop();
 	void setup();
 	void ChangeState(BaseState* state);
-private:
-	void DeleteActiveState();
 
+private:
 	MasterRenderer* m_masterRenderer = nullptr;
 	BaseState* m_activeState = nullptr;
 

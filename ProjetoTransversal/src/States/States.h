@@ -16,6 +16,8 @@ public:
 	BaseState(Application* app, GLFWwindow* window)
 		: m_application(app), m_window(window) {}
 
+	virtual ~BaseState() = default;
+
 	virtual void Update(double elapsedTime) = 0;
 	virtual void Render(MasterRenderer* renderer) = 0;
 
