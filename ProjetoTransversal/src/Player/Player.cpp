@@ -54,6 +54,12 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	//std::cout << "Y: [" << yoffset << "] X: [" << xoffset << "]\n";
 }
 
+void Player::SetWindow(GLFWwindow* window) {
+	if (window) {
+		glfwSetScrollCallback(window, scrollCallback);
+	}
+}
+
 void Player::Update(World* world, GLFWwindow* window, double elapsedTime)
 {
 	m_elapsedTime = elapsedTime;

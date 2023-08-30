@@ -30,6 +30,7 @@ public:
 	void Update(World* world, GLFWwindow* window, double elapsedTime);
 	void SetPosition(glm::dvec3 newPos);
 	void SetCamera(glm::dvec3 newPos);
+	void SetWindow(GLFWwindow* window);
 
 
 	void CreateProjectionMatrix();

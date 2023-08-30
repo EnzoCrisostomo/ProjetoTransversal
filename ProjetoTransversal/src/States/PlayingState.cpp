@@ -8,6 +8,7 @@ PlayingState::PlayingState(Application* app, GLFWwindow* window, std::string wor
     glfwSwapInterval(0);
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     m_world = new World(m_player, worldName);
+    m_player.SetWindow(window);
 }
 
 PlayingState::~PlayingState()
